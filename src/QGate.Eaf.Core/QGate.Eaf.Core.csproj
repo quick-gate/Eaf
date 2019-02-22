@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\QGate.Eaf.Data\QGate.Eaf.Data.csproj" />
+    <ProjectReference Include="..\QGate.Eaf.Domain\QGate.Eaf.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
