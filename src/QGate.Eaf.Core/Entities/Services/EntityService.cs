@@ -1,9 +1,12 @@
-﻿using QGate.Eaf.Core.Infrastructure;
+﻿using QGate.Core.Collections;
+using QGate.Eaf.Core.Infrastructure;
 using QGate.Eaf.Data.Ef;
 using QGate.Eaf.Domain.Components.Entities;
 using QGate.Eaf.Domain.Entities.Models.Params;
 using QGate.Eaf.Domain.Entities.Services;
 using QGate.Eaf.Domain.Exceptions;
+using QGate.Eaf.Domain.Metadatas.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 
@@ -28,9 +31,17 @@ namespace QGate.Eaf.Core.Entities.Services
                 throw new EafException($"Cannot find entity {parameters.EntityName}. Probably has not configured metadata");
             }
 
+            var entityListAttributes = new List<EntityListAttribute>();
+
+            foreach (var attribute in entityMetadata.Attributes.Values)
+            {
+                entityListAttributes.Add(MapEntityListAttribute(attribute));
+            }
+
             //var entities = _dataContext.Set(entityMetadata.Type, "Description")
-            var entities = _dataContext.Set(entityMetadata.Type, "Description")
-                //.Where("Code == @0", "001.00027013")
+            var entities = _dataContext.Set(entityMetadata.Type, "Description.Translations")
+                //.Where("Description !=nullCode == @0", "001.00027013")
+                .Where("Description !=null")
                 //.Select("new(Id as XXX, Code)")
                 .Take(10)
                 
@@ -40,12 +51,24 @@ namespace QGate.Eaf.Core.Entities.Services
             {
                 EntityList = new EntityList
                 {
-                    Entities = entities
+                    Entities = entities,
+                    Attributes = entityListAttributes
                 }
             };
 
             return result;
             
+        }
+
+        private EntityListAttribute MapEntityListAttribute(AttributeMetadata attribute)
+        {
+            return new EntityListAttribute
+            {
+                Name = attribute.Name,
+                Caption = attribute.Translations.IsNullOrEmpty() ?
+                    attribute.Name : attribute.Translations[0].Name,
+                IsKey = attribute.IsKey
+            };
         }
     }
 }
