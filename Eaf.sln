@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QGate.Eaf.Data", "src\QGate
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QGate.Eaf.Domain", "src\QGate.Eaf.Domain\QGate.Eaf.Domain.csproj", "{2521E5B8-926F-43C1-9672-4A8814F0DBB6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{F60B1F6D-1BA3-4FB1-B1A7-D7A4B3A6F132}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QGate.Core", "..\Shared\src\QGate.Core\QGate.Core.csproj", "{CCEA78BD-5CC8-4DD9-A0C2-8667D29D00A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +31,16 @@ Global
 		{2521E5B8-926F-43C1-9672-4A8814F0DBB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2521E5B8-926F-43C1-9672-4A8814F0DBB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2521E5B8-926F-43C1-9672-4A8814F0DBB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCEA78BD-5CC8-4DD9-A0C2-8667D29D00A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCEA78BD-5CC8-4DD9-A0C2-8667D29D00A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCEA78BD-5CC8-4DD9-A0C2-8667D29D00A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCEA78BD-5CC8-4DD9-A0C2-8667D29D00A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{CCEA78BD-5CC8-4DD9-A0C2-8667D29D00A9} = {F60B1F6D-1BA3-4FB1-B1A7-D7A4B3A6F132}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2ECD3923-B41C-4B1F-B681-D72E5FBCF625}
