@@ -28,6 +28,12 @@ namespace QGate.Eaf.Domain.Metadatas.Models
                 if(string.IsNullOrWhiteSpace(Name))
                 {
                     Name = value.AssemblyQualifiedName;
+
+                    if (this is EntityMetadata)
+                    {
+                        var nameSegments = Name.Split(',');
+                        Name = string.Concat(nameSegments[0], ",", nameSegments[1]);
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(StorageName))

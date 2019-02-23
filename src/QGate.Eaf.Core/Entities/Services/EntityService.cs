@@ -1,11 +1,11 @@
 ﻿using QGate.Core.Collections;
-using QGate.Eaf.Core.Infrastructure;
 using QGate.Eaf.Data.Ef;
 using QGate.Eaf.Domain.Components.Entities;
 using QGate.Eaf.Domain.Entities.Models.Params;
 using QGate.Eaf.Domain.Entities.Services;
 using QGate.Eaf.Domain.Exceptions;
 using QGate.Eaf.Domain.Metadatas.Models;
+using QGate.Eaf.Domain.Metadatas.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
@@ -15,13 +15,15 @@ namespace QGate.Eaf.Core.Entities.Services
     public class EntityService : IEntityService
     {
         private readonly EafDataContext _dataContext;
-        public EntityService(EafDataContext dataContext)
+        private readonly IMetadataService _metadataService;
+        public EntityService(EafDataContext dataContext, IMetadataService metadataService)
         {
             _dataContext = dataContext;
+            _metadataService = metadataService;
         }
         public GetEntityListResult GetEntityList(GetEntityListParams parameters)
         {
-            var entityMetadata = ServiceLocator.MetadataService.GetEntityMetadata(new Domain.Metadatas.Models.Params.GetEntityMetadataParams
+            var entityMetadata = _metadataService.GetEntityMetadata(new Domain.Metadatas.Models.Params.GetEntityMetadataParams
             {
                 EntityName = parameters.EntityName
             });

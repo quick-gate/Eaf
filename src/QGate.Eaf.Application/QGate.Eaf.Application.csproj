@@ -5,10 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\QGate.Eaf.Core\QGate.Eaf.Core.csproj" />
     <ProjectReference Include="..\QGate.Eaf.Domain\QGate.Eaf.Domain.csproj" />
   </ItemGroup>
 
