@@ -20,5 +20,12 @@ namespace QGate.Eaf.AspNetCore.Controllers
         {
             return _entityService.GetEntityList(parameters);
         }
+
+        [Route("")]
+        [HttpGet]
+        public ActionResult GetEntityList()
+        {
+            return Ok("olee");
+        }
     }
 }
