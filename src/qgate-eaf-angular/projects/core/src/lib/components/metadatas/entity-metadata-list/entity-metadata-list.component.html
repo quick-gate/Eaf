@@ -1,0 +1,16 @@
+<ng-container  *ngIf="model">
+  <div *ngFor="let entity of model">
+    
+    <h2>{{entity.Translations[0].Name}}</h2>
+
+    <div *ngFor="let attribute of entity.Attributes">
+      <strong>{{attribute.Name}}</strong>
+      <!-- <div *ngFor="let translation of attribute.Translations">{{translation.Name}}</div> -->
+    </div>
+
+  </div>
+  
+  
+</ng-container>
+
+

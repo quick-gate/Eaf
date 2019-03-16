@@ -1,0 +1,11 @@
+<ng-container *ngIf="model">
+  <ng-container *ngIf="autogenerate">
+      <div *ngFor="let component of model.Components">
+          <eaf-component-renderer  [model]="model.Entity" [component]="component"></eaf-component-renderer>
+        </div>
+  </ng-container>
+
+  <ng-template *ngTemplateOutlet="customTemplate; context: customTemplateContext"></ng-template>
+  <button class="btn btn-default" (click)="onOkClick()">OK</button>
+</ng-container>
+

@@ -1,4 +1,6 @@
-﻿using QGate.Eaf.Domain.Exceptions;
+﻿using QGate.Core.Collections;
+using QGate.Eaf.Domain.Exceptions;
+using QGate.Eaf.Domain.Globalization;
 using QGate.Eaf.Domain.Metadatas.Models;
 using QGate.Eaf.Domain.Metadatas.Models.Params;
 using QGate.Eaf.Domain.Metadatas.Services;
@@ -13,6 +15,8 @@ namespace QGate.Eaf.Core.Metadatas.Services
         private static IDictionary<string, EntityMetadata> _entityMetadataDictionary = new Dictionary<string, EntityMetadata>();
         private Type AttributeMetadataType = typeof(AttributeMetadata);
         private Type RelationMetadataType = typeof(RelationMetadata);
+        //TODO add to configuration
+        private readonly string _defaultLanguage = LanguageCodes.cs;
 
         private static bool _isInitialized;
 
@@ -43,8 +47,15 @@ namespace QGate.Eaf.Core.Metadatas.Services
         {
             var descriptorType = descriptor.GetType();
 
-
             var entityMetadata = descriptor.Entity;
+
+            if(entityMetadata.Translations.IsNullOrEmpty())
+            {
+                entityMetadata.Translations = new List<MetadataTranslation>
+                {
+                    new MetadataTranslation(entityMetadata.Type.Name, _defaultLanguage)
+                };
+            }
 
             _entityMetadataDictionary.Add(entityMetadata.Name, entityMetadata);
 

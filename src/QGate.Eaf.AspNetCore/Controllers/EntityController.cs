@@ -4,8 +4,8 @@ using QGate.Eaf.Domain.Entities.Services;
 
 namespace QGate.Eaf.AspNetCore.Controllers
 {
-    [Route("api/eaf/entities")]
-    public class EntityController : Controller
+    [Route(BaseUrl + "entities")]
+    public class EntityController : ControllerBase
     {
         private readonly IEntityService _entityService;
 
@@ -21,11 +21,18 @@ namespace QGate.Eaf.AspNetCore.Controllers
             return _entityService.GetEntityList(parameters);
         }
 
-        [Route("")]
-        [HttpGet]
-        public ActionResult GetEntityList()
+        [Route("get-detail")]
+        [HttpPost]
+        public GetEntityDetailResult GetEntityList([FromBody]GetEntityDetailParams parameters)
         {
-            return Ok("olee");
+            return _entityService.GetEntityDetail(parameters);
+        }
+
+        [Route("")]
+        [HttpPost]
+        public SaveEntityResult SaveEntity([FromBody] SaveEntityParams parameters)
+        {
+            return _entityService.SaveEntity(parameters);
         }
     }
 }

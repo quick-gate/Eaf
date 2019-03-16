@@ -2,6 +2,8 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
-export class GetEntityListParams
+import { EntityParamsBase } from './EntityParamsBase.model';
+
+export class GetEntityListParams extends EntityParamsBase
 {
 }

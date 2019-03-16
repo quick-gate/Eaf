@@ -1,17 +1,23 @@
 <h1>Entity list</h1>
-<p-table [value]="model">
+
+<p-table *ngIf="isListVisible" [value]="model.Entities">
   <ng-template pTemplate="header">
       <tr>
-          <th *ngFor="let attribute of attributes">
+          <th *ngFor="let attribute of model.Attributes">
               {{attribute.Caption}}
           </th>
       </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-model>
+  <ng-template pTemplate="body" let-entity>
       <tr>
-          <td *ngFor="let attribute of attributes">
-                  {{model[attribute.Name]}}
+          <td *ngFor="let attribute of model.Attributes">
+              <a href="#" *ngIf="attribute.IsKey" (click)="showEntityDetail(entity)">{{entity[attribute.Name]}}</a>
+              <span *ngIf="!attribute.IsKey">{{entity[attribute.Name]}}</span>
           </td>
       </tr>
   </ng-template>
 </p-table>
+
+<eaf-entity-detail></eaf-entity-detail>
+
+

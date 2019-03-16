@@ -1,6 +1,10 @@
 ﻿using QGate.Core.Collections;
+using QGate.Eaf.Domain.Components.Editors;
 using QGate.Eaf.Domain.Components.Entities;
+using QGate.Eaf.Domain.Components.General;
+using QGate.Eaf.Domain.Entities.Models;
 using QGate.Eaf.Domain.Entities.Models.Params;
+using QGate.Eaf.Domain.Metadatas.Models;
 using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using System;
@@ -30,9 +34,30 @@ namespace QGate.Eaf.Application.Infrastructure.Configuration
             {
                 typeof(EntityList),
                 typeof(EntityListAttribute),
+                typeof(EntityParamsBase),
                 typeof(GetEntityListParams),
-                typeof(GetEntityListResult)
-            }, null, _domainModelsNamespace);
+                typeof(GetEntityListResult),
+                typeof(EntityMetadata),
+                typeof(MetadataBase),
+                typeof(AttributeMetadata),
+                typeof(RelationMetadata),
+                typeof(GetEntityDetailParams),
+                typeof(GetEntityDetailResult),
+                typeof(AttributeValue),
+                //Components
+                typeof(ComponentBase),
+                typeof(ComponentBinding),
+                typeof(EditorBase),
+                typeof(TextBox),
+                typeof(EntityDetail),
+                typeof(AttributeValue),
+                typeof(SaveEntityParams),
+                typeof(SaveEntityResult)
+            },
+            new List<Type>
+            {
+                typeof(ComponentType)
+            }, _domainModelsNamespace);
         }
 
         private static void ConfigureAssembly(ConfigurationBuilder builder, Assembly assembly, string modelsBaseNamespace)

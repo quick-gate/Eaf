@@ -33,7 +33,7 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         {
             if (getMetadata is Func<AttributeMetadata>)
             {
-                if (Entity.Attributes.TryGetValue(name, out AttributeMetadata metadata))
+                if (Entity.TryGetAttribute(name, out AttributeMetadata metadata))
                 {
                     return metadata as TMetadata;
                 }
@@ -46,7 +46,7 @@ namespace QGate.Eaf.Domain.Metadatas.Models
             }
             else if (getMetadata is Func<RelationMetadata>)
             {
-                if (Entity.Relations.TryGetValue(name, out RelationMetadata metadata))
+                if (Entity.TryGetRelation(name, out RelationMetadata metadata))
                 {
                     return metadata as TMetadata;
                 }

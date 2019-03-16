@@ -18,4 +18,15 @@
   </li>
 </ul>
 
-<eaf-entity-list></eaf-entity-list>
+<eaf-entity-list entityName='QGate.Erp.Domain.Models.Products.Product, QGate.Erp.Domain'></eaf-entity-list>
+<eaf-entity-detail [keys]="keys" [entityName]="entityName" [autogenerate]="false" isVisible="true" #parent>
+  <ng-template let-model>
+      <eaf-text-box [(model)]="model.Entity.Code"></eaf-text-box>
+      <br><br>
+      <eaf-text-box [(model)]="model.Entity.Name"></eaf-text-box>
+      <br><br>
+  </ng-template>
+</eaf-entity-detail>
+
+
+

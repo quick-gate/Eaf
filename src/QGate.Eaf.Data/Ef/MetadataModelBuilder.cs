@@ -35,9 +35,9 @@ namespace QGate.Eaf.Data.Ef
                 entityBuilder.ToTable(entityMetadata.StorageName);
             }
 
-            entityBuilder.HasKey(entityMetadata.KeyAttributes.Select(x => x.Name).ToArray());
+            entityBuilder.HasKey(entityMetadata.GetKeyAttributes().Select(x => x.Name).ToArray());
 
-            foreach (var attribute in entityMetadata.Attributes.Values)
+            foreach (var attribute in entityMetadata.Attributes)
             {
                 var propertyBuilder = entityBuilder
                     .Property(attribute.Name)
@@ -54,7 +54,7 @@ namespace QGate.Eaf.Data.Ef
                 }
             }
 
-            foreach (var relation in entityMetadata.Relations.Values)
+            foreach (var relation in entityMetadata.Relations)
             {
                 //entityBuilder.HasOne(x => x.Description)
                 //    .WithOne(x=>x.Product)
