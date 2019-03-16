@@ -34,6 +34,7 @@ export class EntityDetailComponent implements OnInit  {
     var params = new GetEntityDetailParams();
     params.EntityName = this.entityName;
     params.Keys = this.keys;
+    params.IncludePropertyPaths = ['Description', 'Description.Translations'];
 
     this.model = await this.entityService.GetEntityDetail(params);
 
@@ -44,6 +45,7 @@ export class EntityDetailComponent implements OnInit  {
     var params = new SaveEntityParams();
     params.Entity = this.model.Entity;
     params.EntityName = this.entityName;
+    
     await this.entityService.SaveEntity(params);
     alert("Saved");
   }

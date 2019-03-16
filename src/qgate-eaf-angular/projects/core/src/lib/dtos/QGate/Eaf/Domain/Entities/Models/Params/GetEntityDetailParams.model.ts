@@ -8,4 +8,5 @@ import { AttributeValue } from '../AttributeValue.model';
 export class GetEntityDetailParams extends EntityParamsBase
 {
 	public Keys: AttributeValue[];
+	public IncludePropertyPaths: string[];
 }

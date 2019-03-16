@@ -35,11 +35,9 @@ namespace QGate.Eaf.Core.Entities.Services
 
             var entityMetadata = GetEntityMetadata(parameters);
 
-            var query = _dataContext.Set(entityMetadata.Type);
-            //foreach (var key in parameters.Keys)
-            //{
-            //    query = query.Where(key.Name, key.Value);
-            //}
+            var query = _dataContext.Set(
+                entityMetadata.Type,
+                parameters.IncludePropertyPaths.IsNullOrEmpty() ? null : parameters.IncludePropertyPaths.ToArray());
 
             for (int i = 0; i < parameters.Keys.Count; i++)
             {
