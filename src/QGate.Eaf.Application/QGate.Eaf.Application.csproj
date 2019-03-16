@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\src\QGate.Core\QGate.Core.csproj" />
     <ProjectReference Include="..\QGate.Eaf.Core\QGate.Eaf.Core.csproj" />
     <ProjectReference Include="..\QGate.Eaf.Domain\QGate.Eaf.Domain.csproj" />
   </ItemGroup>

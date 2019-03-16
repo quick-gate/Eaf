@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\src\QGate.Core\QGate.Core.csproj" />
+    <ProjectReference Include="..\..\Shared\src\QGate.Core\QGate.Core.csproj" />
     <ProjectReference Include="..\QGate.Eaf.Data\QGate.Eaf.Data.csproj" />
     <ProjectReference Include="..\QGate.Eaf.Domain\QGate.Eaf.Domain.csproj" />
   </ItemGroup>
