@@ -8,4 +8,5 @@ export class SaveEntityParams extends EntityParamsBase
 {
 	public Entity: any;
 	public IsNew: boolean;
+	public IsFillEntityListItemRequired: boolean;
 }

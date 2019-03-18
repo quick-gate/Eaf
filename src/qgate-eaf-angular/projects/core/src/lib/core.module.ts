@@ -22,6 +22,7 @@ import { EntityDetailTemplateComponent } from './components/entities/entity-deta
     TableModule,
     FormsModule
   ],
-  exports: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent, TextBoxComponent, EntityDetailTemplateComponent]
+  exports: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent, TextBoxComponent, EntityDetailTemplateComponent],
+  entryComponents: [EntityDetailComponent, EntityListComponent]
 })
 export class CoreModule { }

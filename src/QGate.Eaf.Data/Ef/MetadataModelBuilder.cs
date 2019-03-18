@@ -35,7 +35,7 @@ namespace QGate.Eaf.Data.Ef
                 entityBuilder.ToTable(entityMetadata.StorageName);
             }
 
-            entityBuilder.HasKey(entityMetadata.GetKeyAttributes().Select(x => x.Name).ToArray());
+            entityBuilder.HasKey(entityMetadata.GetKeys().Select(x => x.Name).ToArray());
 
             foreach (var attribute in entityMetadata.Attributes)
             {

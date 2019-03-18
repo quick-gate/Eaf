@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ViewContainerRef, Inject, ComponentFactoryResolver, ComponentRef } from '@angular/core';
 import { EntityService } from '../../../services/entities/entity.service';
 import { EntityList } from '../../../dtos/QGate/Eaf/Domain/Components/Entities/EntityList.model';
 import { GetEntityListParams } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/Params/GetEntityListParams.model';
@@ -10,14 +10,21 @@ import { AttributeValue } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/A
   templateUrl: './entity-list.component.html',
   styleUrls: ['./entity-list.component.css']
 })
-export class EntityListComponent implements OnInit {
-  model: EntityList;
-  isListVisible = false;
-  isDetailVisible = false;
-  @Input() entityName: string;
-  @ViewChild(EntityDetailComponent) entityDetail: EntityDetailComponent;
 
-  constructor(private entityService: EntityService) { }
+export class EntityListComponent implements OnInit {
+  @Input() entityName: string;
+  @ViewChild('entityDetailContainer', { read: ViewContainerRef }) entityDetailContainer: ViewContainerRef;
+
+  model: EntityList;
+  entityDetail: EntityDetailComponent;
+  entityDetailRef: ComponentRef<EntityDetailComponent>;
+  //TODO Add to constants - 1
+  private selectedEntityIndex = -1;
+
+
+
+  constructor(private entityService: EntityService, @Inject(ComponentFactoryResolver)
+  private componentFactoryResolver: ComponentFactoryResolver) { }
 
   async ngOnInit() {
 
@@ -26,17 +33,15 @@ export class EntityListComponent implements OnInit {
     params.EntityName = this.entityName;
 
     this.model = await this.entityService.GetEntityList(params);
-
-    if (this.model) {
-      this.isListVisible = true;
-    }
-
   }
 
-  async showEntityDetail(entity: any) {
-    this.isListVisible = false;
-    this.isDetailVisible = true;
+  async onEditClick(entity: any) {
+    this.selectedEntityIndex = this.model.Entities.indexOf(entity);
+    console.log(this.selectedEntityIndex);
+    await this.showEntityDetail(this.getEntityKeys(entity));
+  }
 
+  getEntityKeys(entity: any): Array<AttributeValue> {
     var keys = new Array<AttributeValue>();
     for (const attribute of this.model.Attributes) {
       if (attribute.IsKey) {
@@ -46,13 +51,36 @@ export class EntityListComponent implements OnInit {
 
         keys.push(keyValue);
       }
-
     }
 
-    this.entityDetail.keys = keys;
-    this.entityDetail.entityName = this.entityName;
-    this.entityDetail.isVisible = this.isDetailVisible;
-    await this.entityDetail.show();
+    return keys;
+  }
+
+  async onAddClick() {
+    this.selectedEntityIndex = -1;
+    await this.showEntityDetail(null);
+  }
+
+  async showEntityDetail(keys: Array<AttributeValue>) {
+    const factory = this.componentFactoryResolver.resolveComponentFactory(
+      EntityDetailComponent
+    );
+    this.entityDetailRef = this.entityDetailContainer.createComponent(factory);
+
+    var entityDetail = this.entityDetailRef.instance;
+    entityDetail.entityName = this.entityName;
+    entityDetail.keys = keys;
+    entityDetail.onOkClick.subscribe(x => this.onEntityDetailOkClick(x));
+  }
+
+  async onEntityDetailOkClick(entityListItem: any) {
+    if (this.selectedEntityIndex > -1) {
+      this.model.Entities[this.selectedEntityIndex] = entityListItem;
+    } else  {
+      this.model.Entities.push(entityListItem);
+    }
+
+    this.entityDetailRef.destroy();
   }
 
 

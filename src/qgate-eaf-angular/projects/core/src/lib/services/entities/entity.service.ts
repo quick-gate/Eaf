@@ -40,7 +40,7 @@ export class EntityService {
     return result.EntityDetail;
   }
 
-  async SaveEntity(params: SaveEntityParams): Promise<any> {
+  async SaveEntity(params: SaveEntityParams): Promise<SaveEntityResult> {
 
     return await this.apiService.callApi<SaveEntityResult>('entities', params);
 

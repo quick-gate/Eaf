@@ -4,4 +4,5 @@
 
 export class SaveEntityResult
 {
+	public EntityLisItem: any;
 }

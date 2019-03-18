@@ -2,6 +2,16 @@
 {
     public class AttributeValue
     {
+        public AttributeValue()
+        {
+
+        }
+
+        public AttributeValue(string name, object value)
+        {
+            Name = name;
+            Value = value;
+        }
         /// <summary>
         /// Attribute Name
         /// </summary>

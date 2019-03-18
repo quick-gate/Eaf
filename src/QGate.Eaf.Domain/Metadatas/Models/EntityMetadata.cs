@@ -22,7 +22,7 @@ namespace QGate.Eaf.Domain.Metadatas.Models
             Attributes.Add(attributeMetadata);
         }
 
-        public IList<AttributeMetadata> GetKeyAttributes()
+        public IList<AttributeMetadata> GetKeys()
         {
             return _keyAttributes;
         }
