@@ -56,7 +56,7 @@ namespace QGate.Eaf.Data.Ef
 
             foreach (var relation in entityMetadata.Relations)
             {
-                if (relation.IsVirtual)
+                if (relation.IsReference)
                 {
                     continue;
                 }
@@ -67,14 +67,14 @@ namespace QGate.Eaf.Data.Ef
 
                 if (relation.RelationType == RelationType.OneToOne)
                 {
-                    entityBuilder.HasOne(relation.Entity.Type, relation.Name)
-                        .WithOne(relation.AttributeName)
+                    var referenceBuilder = entityBuilder.HasOne(relation.Entity.Type, relation.Name)
+                        .WithOne(relation.EntityReferenceAttribute?.Name)                
                         .HasForeignKey(entityMetadata.Type, relation.Keys.Select(x => x.Name).ToArray());
                 }
                 else if (relation.RelationType == RelationType.OneToMany)
                 {
                     entityBuilder.HasOne(relation.Entity.Type, relation.Name)
-                        .WithMany(relation.AttributeName)
+                        .WithMany(relation.EntityReferenceAttribute?.Name)
                         .HasForeignKey(relation.Keys.Select(x => x.Name).ToArray());
                 }
                 else

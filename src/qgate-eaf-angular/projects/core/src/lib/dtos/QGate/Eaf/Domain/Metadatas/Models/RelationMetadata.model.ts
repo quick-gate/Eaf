@@ -2,15 +2,14 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
-import { AttributeMetadata } from './AttributeMetadata.model';
 import { EntityMetadata } from './EntityMetadata.model';
+import { AttributeMetadata } from './AttributeMetadata.model';
 
 export class RelationMetadata
 {
-	public Keys: AttributeMetadata[];
-	public AttributeName: string;
-	public Attribute: AttributeMetadata;
 	public Entity: EntityMetadata;
+	public EntityReferenceAttribute: any;
+	public Keys: AttributeMetadata[];
 	public RelationType: number;
-	public IsVirtual: boolean;
+	public IsReference: boolean;
 }

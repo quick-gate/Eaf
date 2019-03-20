@@ -45,7 +45,7 @@ namespace QGate.Eaf.Core.Entities.Services
                 includes = new List<string>();
                 foreach (var relation in entityMetadata.Relations)
                 {
-                    includes.Add(relation.AttributeName);
+                    includes.Add(relation.Name);
                 }
             }
 
