@@ -20,6 +20,7 @@ export class EntityListComponent implements OnInit {
   entityDetailRef: ComponentRef<EntityDetailComponent>;
   //TODO Add to constants - 1
   private selectedEntityIndex = -1;
+  private selectedEntities: any[];
 
 
 
@@ -81,6 +82,12 @@ export class EntityListComponent implements OnInit {
     }
 
     this.entityDetailRef.destroy();
+  }
+
+
+  onRowDblClick(selectedEtityIndex: number, selectedEntity:any){
+    console.log(selectedEtityIndex);
+    console.log(selectedEntity);
   }
 
 

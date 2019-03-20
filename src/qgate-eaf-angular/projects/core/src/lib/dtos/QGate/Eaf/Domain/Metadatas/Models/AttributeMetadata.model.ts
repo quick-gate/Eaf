@@ -2,9 +2,7 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
-import { MetadataBase } from './MetadataBase.model';
-
-export class AttributeMetadata extends MetadataBase
+export class AttributeMetadata
 {
 	public IsKey: boolean;
 	public AttributeType: any;

@@ -44,15 +44,16 @@ namespace QGate.Eaf.Application.Infrastructure.Configuration
                 typeof(GetEntityDetailParams),
                 typeof(GetEntityDetailResult),
                 typeof(AttributeValue),
+                typeof(AttributeValue),
+                typeof(SaveEntityParams),
+                typeof(SaveEntityResult),
                 //Components
                 typeof(ComponentBase),
                 typeof(ComponentBinding),
                 typeof(EditorBase),
                 typeof(TextBox),
                 typeof(EntityDetail),
-                typeof(AttributeValue),
-                typeof(SaveEntityParams),
-                typeof(SaveEntityResult)
+                typeof(EntitySelector)
             },
             new List<Type>
             {

@@ -3,5 +3,6 @@
 //     the code is regenerated.
 
 export enum ComponentType { 
-	TextBox = 0
+	TextBox = 0, 
+	EntitySelector = 1
 }

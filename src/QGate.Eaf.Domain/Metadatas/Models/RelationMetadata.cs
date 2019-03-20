@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace QGate.Eaf.Domain.Metadatas.Models
 {
-    public class RelationMetadata: MetadataBase
+    public class RelationMetadata: AttributeMetadataBase
     {
         /// <summary>
         /// Relation Key from current Entity
@@ -14,6 +14,10 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         /// </summary>
         public string AttributeName { get; set; }
         /// <summary>
+        /// Related navigation Attribute
+        /// </summary>
+        public AttributeMetadata Attribute { get; set; }
+        /// <summary>
         /// Related Entity
         /// </summary>
         public EntityMetadata Entity { get; set; }
@@ -21,5 +25,10 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         /// Relation Type
         /// </summary>
         public RelationType RelationType { get; set; }
+        /// <summary>
+        /// Determines whether is Virtual (Navigation property) attribute
+        /// </summary>
+        public bool IsVirtual { get; set; }
+
     }
 }

@@ -6,6 +6,8 @@
         {
             Type = type;
         }
+
+        public string Caption { get; set; }
         public ComponentType Type { get; private set; }
 
         public ComponentBinding Binding { get; set; }

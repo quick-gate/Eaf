@@ -13,10 +13,11 @@ namespace QGate.Eaf.Core.Metadatas.Services
     public class MetadataService : IMetadataService
     {
         private static IDictionary<string, EntityMetadata> _entityMetadataDictionary = new Dictionary<string, EntityMetadata>();
+        private IList<RelationMetadata> _relations = new List<RelationMetadata>();
         private Type AttributeMetadataType = typeof(AttributeMetadata);
         private Type RelationMetadataType = typeof(RelationMetadata);
         //TODO add to configuration
-        private readonly string _defaultLanguage = LanguageCodes.cs;
+        private readonly string _defaultLanguage = LanguageCodes.en;
 
         private static bool _isInitialized;
 
@@ -35,10 +36,28 @@ namespace QGate.Eaf.Core.Metadatas.Services
             {
                 return;
             }
-
+            
             foreach (var descriptor in descriptors)
             {
                 MapDescriptorToMetadata(descriptor);
+            }
+
+            foreach (var relation in _relations)
+            {
+                if(!_entityMetadataDictionary.TryGetValue(relation.Entity.Name, out EntityMetadata entityMetadata))
+                {
+                    //TODO what will do with relation to nonexisting metadfata entity
+                    continue;
+                }
+
+                entityMetadata.Relations.Add(new RelationMetadata
+                {
+                    Name = relation.AttributeName,
+                    Entity = relation.Owner,
+                    AttributeName = relation.AttributeName,
+                    RelationType = relation.RelationType,
+                    IsVirtual = true
+                });
             }
         }
 
@@ -105,6 +124,8 @@ namespace QGate.Eaf.Core.Metadatas.Services
                     var relationMetadata = GetMetadata<RelationMetadata>(propertyInfo, descriptor, descriptorType);
 
                     relationMetadata.Name = propertyInfo.Name;
+
+                    _relations.Add(relationMetadata);
                 }
                 //else if (propertyInfo.PropertyType.IsSubclassOf(_relationDescriptorBaseType))
                 //{
@@ -118,6 +139,18 @@ namespace QGate.Eaf.Core.Metadatas.Services
             }
         }
 
+        private void FillAttributeMetadataBase(EntityMetadata entityMetadata, AttributeMetadataBase attributeMetadataBase)
+        {
+            attributeMetadataBase.Owner = entityMetadata;
+            if(attributeMetadataBase.Translations.IsNullOrEmpty())
+            {
+                attributeMetadataBase.Translations = new List<MetadataTranslation>
+                {
+                    new MetadataTranslation(attributeMetadataBase.Name, _defaultLanguage)
+                };
+            }
+        }
+
         private static PropertyInfo SetAttributeNameAndGetTargetProperty(EntityMetadata entityMetadata, string attributeName, AttributeMetadata attributeMetadata)
         {
             attributeMetadata.Name = attributeName;
@@ -126,12 +159,14 @@ namespace QGate.Eaf.Core.Metadatas.Services
             return targetProperty;
         }
 
-        public TMetadata GetMetadata<TMetadata>(PropertyInfo property, EntityDescriptor descriptor, Type descriptorType)
+        public TMetadata GetMetadata<TMetadata>(PropertyInfo property, EntityDescriptor descriptor, Type descriptorType) where TMetadata: AttributeMetadataBase
         {
-            var metadata = property.GetValue(descriptor) ??
+            var metadata = (TMetadata) property.GetValue(descriptor) ??
                         throw new EafException($"EntityDescriptor {descriptorType.FullName} initialization failed. Cannot find attribute {property.Name} .");
 
-            return (TMetadata)metadata;
+            FillAttributeMetadataBase(descriptor.Entity, metadata);
+
+            return metadata;
         }
 
         public EntityMetadata GetEntityMetadata(GetEntityMetadataParams parameters)

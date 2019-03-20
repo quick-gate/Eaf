@@ -27,7 +27,7 @@ export class EntityDetailComponent implements OnInit {
     const params = new GetEntityDetailParams();
     params.EntityName = this.entityName;
     params.Keys = this.keys;
-    params.IncludePropertyPaths = ['Description', 'Description.Translations'];
+    params.IncludePropertyPaths = ['*'];
 
 
     this.model = await this.entityService.GetEntityDetail(params);

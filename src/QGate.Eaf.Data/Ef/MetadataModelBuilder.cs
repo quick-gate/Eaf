@@ -56,6 +56,11 @@ namespace QGate.Eaf.Data.Ef
 
             foreach (var relation in entityMetadata.Relations)
             {
+                if (relation.IsVirtual)
+                {
+                    continue;
+                }
+
                 //entityBuilder.HasOne(x => x.Description)
                 //    .WithOne(x=>x.Product)
                 //    .HasForeignKey<ProductDescription>(x => x.ProductId);

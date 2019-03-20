@@ -38,6 +38,17 @@ namespace QGate.Eaf.Core.Entities.Services
 
             var entityMetadata = GetEntityMetadata(parameters);
 
+            var includes = parameters.IncludePropertyPaths;
+
+            if (includes != null && includes.Count == 1 && includes[0] == "*")
+            {
+                includes = new List<string>();
+                foreach (var relation in entityMetadata.Relations)
+                {
+                    includes.Add(relation.AttributeName);
+                }
+            }
+
             dynamic entity;
 
             if (parameters.Keys.IsNullOrEmpty())
@@ -48,37 +59,83 @@ namespace QGate.Eaf.Core.Entities.Services
             {
                 var query = _dataContext.Set(
                     entityMetadata.Type,
-                    parameters.IncludePropertyPaths.IsNullOrEmpty() ? null : parameters.IncludePropertyPaths.ToArray());
+                    parameters.IncludePropertyPaths.IsNullOrEmpty() ? null : includes.ToArray());
 
                 query = AddKeyConditions(query, parameters.Keys);
                 entity = query.FirstOrDefault();
 
             }
 
-            return new GetEntityDetailResult
+            var result = new GetEntityDetailResult
             {
                 EntityDetail = new EntityDetail
                 {
                     Entity = entity,
-                    Components = new List<ComponentBase>
-                    {
-                        new TextBox
-                        {
-                            Binding = new ComponentBinding
-                            {
-                                PropertyPath = new List<string> { "Code" }
-                            }
-                        },
-                        new TextBox
-                        {
-                            Binding = new ComponentBinding
-                            {
-                                PropertyPath = new List<string> { "Name" }
-                            }
-                        }
-                    }
+                    Components = new List<ComponentBase>()
+                    //{
+                    //    new TextBox
+                    //    {
+                    //        Binding = new ComponentBinding
+                    //        {
+                    //            PropertyPath = new List<string> { "Code" }
+                    //        }
+                    //    },
+                    //    new TextBox
+                    //    {
+                    //        Binding = new ComponentBinding
+                    //        {
+                    //            PropertyPath = new List<string> { "Name" }
+                    //        }
+                    //    },
+                    //    new EntitySelector
+                    //    {
+                    //        EntityName = "QGate.Erp.Domain.Models.Products.ProductDescription, QGate.Erp.Domain",
+                    //        DisplayAttributes = new List<string> {"Small"},
+                    //        KeyAttributes = new List<string> {"DescriptionId"},
+                    //        RelationAttributes = new List<string> {"ProductId"},
+                    //        Binding = new ComponentBinding
+                    //        {
+                    //            PropertyPath = new List<string> { "Description" }
+                    //        }
+                    //    }
+                    //}
                 }
             };
+
+            foreach (var attribute in entityMetadata.Attributes)
+            {
+                result.EntityDetail.Components.Add(FillComponentBase(new TextBox(), attribute));
+            }
+
+            if (!entityMetadata.Relations.IsNullOrEmpty())
+            {
+                foreach (var relation in entityMetadata.Relations)
+                {
+                    if(relation.RelationType == RelationType.OneToMany)
+                    {
+                        //TODO Implement it
+                        continue;
+                    }
+
+                    var entitySelector = FillComponentBase(new EntitySelector(), relation);
+                    entitySelector.EntityName = relation.Entity.Name;
+                    //TODO define better condition for display attributes
+                    entitySelector.DisplayAttributes = relation.Entity.Attributes.Select(x => x.Name).Take(2).ToList();
+                    result.EntityDetail.Components.Add(entitySelector);
+                    
+                }
+            }
+
+
+
+            return result;
+        }
+
+        private TComponent FillComponentBase<TComponent>(TComponent component, MetadataBase attribute) where TComponent: ComponentBase
+        {
+            component.Caption = attribute.Translations?.FirstOrDefault().Name;
+            component.Binding = new ComponentBinding { PropertyPath = new List<string> { attribute.Name } };
+            return component;
         }
 
         private IQueryable AddKeyConditions(IQueryable query, IList<AttributeValue> keys)
@@ -103,8 +160,8 @@ namespace QGate.Eaf.Core.Entities.Services
             }
 
 
-            List<dynamic> entities = GetEntityListQuery(entityMetadata)
-            .ToDynamicList();
+            var query = GetEntityListQuery(entityMetadata);
+            List<dynamic> entities = query.ToDynamicList();
 
             var result = new GetEntityListResult
             {
@@ -147,7 +204,9 @@ namespace QGate.Eaf.Core.Entities.Services
                 //.Where("Description !=null")
                 .Select(selectDefinition.ToString())
                 //.Select("new(Id as XXX, Code)")
-                .Take(10);
+                .Take(1000);
+
+
         }
 
         public SaveEntityResult SaveEntity(SaveEntityParams parameters)

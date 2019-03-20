@@ -1,6 +1,6 @@
 <h1>Entity list</h1>
 <a href="#" (click)="onAddClick()">Add</a>
-<p-table *ngIf="model" [value]="model.Entities">
+<p-table *ngIf="model" [value]="model.Entities" metaKeySelection="true" selectionMode="multiple" [(selection)]="selectedEntities" pSelectableRowDisabled="true">
   <ng-template pTemplate="header">
       <tr>
           <th *ngFor="let attribute of model.Attributes">
@@ -8,8 +8,8 @@
           </th>
       </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-entity let-i="rowIndex">
-      <tr>
+  <ng-template pTemplate="body" let-entity let-rowData let-rowIndex="rowIndex">
+      <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex" (dblclick)="onRowDblClick(rowIndex, rowData)">
           <td *ngFor="let attribute of model.Attributes">
               <a href="#" *ngIf="attribute.IsKey" (click)="onEditClick(entity, rowIndex)">{{entity[attribute.Name]}}</a>
               <span *ngIf="!attribute.IsKey">{{entity[attribute.Name]}}</span>

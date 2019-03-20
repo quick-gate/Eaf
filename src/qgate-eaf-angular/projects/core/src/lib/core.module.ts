@@ -8,13 +8,14 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { EntityMetadataListComponent } from './components/metadatas/entity-metadata-list/entity-metadata-list.component';
 import { EntityDetailComponent } from './components/entities/entity-detail/entity-detail.component';
-import { TextBoxComponent } from './components/ui-components/editors/text-box/text-box.component';
-import { UiComponentFactoryComponent } from './components/ui-components/general/ui-component-factory/ui-component-factory.component';
-import { ComponentRendererComponent } from './components/ui-components/general/component-renderer/component-renderer.component';
+import { TextBoxComponent } from './components/ui/editors/text-box/text-box.component';
+import { UiComponentFactoryComponent } from './components/ui/general/ui-component-factory/ui-component-factory.component';
+import { ComponentRendererComponent } from './components/ui/general/component-renderer/component-renderer.component';
 import { EntityDetailTemplateComponent } from './components/entities/entity-detail/entity-detail-template/entity-detail-template.component';
+import { EntitySelectorComponent } from './components/ui/entities/entity-selector/entity-selector.component';
 
 @NgModule({
-  declarations: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent, TextBoxComponent, UiComponentFactoryComponent, ComponentRendererComponent, EntityDetailTemplateComponent],
+  declarations: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent, TextBoxComponent, UiComponentFactoryComponent, ComponentRendererComponent, EntityDetailTemplateComponent, EntitySelectorComponent],
   imports: [
     HttpClientModule,
     BrowserModule,

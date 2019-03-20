@@ -2,14 +2,15 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
-import { MetadataBase } from './MetadataBase.model';
 import { AttributeMetadata } from './AttributeMetadata.model';
 import { EntityMetadata } from './EntityMetadata.model';
 
-export class RelationMetadata extends MetadataBase
+export class RelationMetadata
 {
 	public Keys: AttributeMetadata[];
 	public AttributeName: string;
+	public Attribute: AttributeMetadata;
 	public Entity: EntityMetadata;
 	public RelationType: number;
+	public IsVirtual: boolean;
 }

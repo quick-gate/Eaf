@@ -7,6 +7,7 @@ import { ComponentBinding } from './ComponentBinding.model';
 
 export abstract class ComponentBase
 {
+	public Caption: string;
 	public Type: ComponentType;
 	public Binding: ComponentBinding;
 }

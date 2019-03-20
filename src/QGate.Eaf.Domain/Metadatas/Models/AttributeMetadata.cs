@@ -1,6 +1,6 @@
 ﻿namespace QGate.Eaf.Domain.Metadatas.Models
 {
-    public class AttributeMetadata: MetadataBase
+    public class AttributeMetadata : AttributeMetadataBase
     {
         public bool IsKey { get; set; }
 
