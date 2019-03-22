@@ -13,6 +13,8 @@ namespace QGate.Eaf.Domain.Metadatas.Models
 
         public void AddAttribute(AttributeMetadata attributeMetadata)
         {
+            FillAttributeAndRelationBase(attributeMetadata);
+
             if (attributeMetadata.IsKey)
             {
                 _keyAttributes.Add(attributeMetadata);
@@ -27,8 +29,14 @@ namespace QGate.Eaf.Domain.Metadatas.Models
             return _keyAttributes;
         }
 
+        private void FillAttributeAndRelationBase(AttributeMetadataBase metadataBase)
+        {
+            metadataBase.Owner = this;
+        }
+
         public void AddRelation(RelationMetadata relationMetadata)
         {
+            FillAttributeAndRelationBase(relationMetadata);
             _relationDictionary.Add(relationMetadata.Name, relationMetadata);
             Relations.Add(relationMetadata);
         }

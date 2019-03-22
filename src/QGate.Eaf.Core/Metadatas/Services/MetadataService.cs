@@ -14,8 +14,9 @@ namespace QGate.Eaf.Core.Metadatas.Services
     {
         private static IDictionary<string, EntityMetadata> _entityMetadataDictionary = new Dictionary<string, EntityMetadata>();
         private IList<(RelationMetadata relation, RelationReferenceMetadata relationReference)> _referenceRelations = new List<(RelationMetadata relation, RelationReferenceMetadata relationReference)>();
-        private Type AttributeMetadataType = typeof(AttributeMetadata);
-        private Type RelationMetadataType = typeof(RelationMetadata);
+        private readonly Type AttributeMetadataType = typeof(AttributeMetadata);
+        //private Type RelationMetadataType = typeof(RelationMetadata);
+        private readonly Type EntityDescriptorType = typeof(EntityDescriptor);
         //TODO add to configuration
         private readonly string _defaultLanguage = LanguageCodes.en;
 
@@ -117,18 +118,49 @@ namespace QGate.Eaf.Core.Metadatas.Services
                         }
                     }
                 }
-                else if (RelationMetadataType.IsAssignableFrom(propertyInfo.PropertyType))
+                //else if (RelationMetadataType.IsAssignableFrom(propertyInfo.PropertyType))
+                //{
+                //    var relationMetadata = GetMetadata<RelationMetadata>(propertyInfo, descriptor, descriptorType);
+
+                //    relationMetadata.Name = propertyInfo.Name;
+
+                //    if(!relationMetadata.IsReference && relationMetadata.EntityReferenceAttribute != null)
+                //    {
+                //        _referenceRelations.Add((relationMetadata, relationMetadata.EntityReferenceAttribute));
+                //    }
+
+                    
+                //}
+                //else if(typeof(RelationDescriptor).IsAssignableFrom(propertyInfo.PropertyType))
+                //{
+                //    var relationDescriptor = (RelationDescriptor)propertyInfo.GetValue(descriptor);
+
+                //    var relationMetadata = relationDescriptor.Metadata;
+                //    FillAttributeMetadataBase(descriptor.Entity, relationMetadata);
+
+                //    relationMetadata.Name = propertyInfo.Name;
+
+                //    if (!relationMetadata.IsReference && relationMetadata.EntityReferenceAttribute != null)
+                //    {
+                //        _referenceRelations.Add((relationMetadata, relationMetadata.EntityReferenceAttribute));
+                //    }
+
+                //}
+                else if (EntityDescriptorType.IsAssignableFrom(propertyInfo.PropertyType))
                 {
-                    var relationMetadata = GetMetadata<RelationMetadata>(propertyInfo, descriptor, descriptorType);
+                    var entityDescriptor = (EntityDescriptor)propertyInfo.GetValue(descriptor);
+                    var entityDescriptorContext = (IEntityDescriptorContext)entityDescriptor;
+                    var relationDescriptor = entityDescriptorContext.RelationDescriptor;
+
+                    var relationMetadata = relationDescriptor.Metadata;
+                    FillAttributeMetadataBase(descriptor.Entity, relationMetadata);
 
                     relationMetadata.Name = propertyInfo.Name;
 
-                    if(!relationMetadata.IsReference && relationMetadata.EntityReferenceAttribute != null)
+                    if (!relationMetadata.IsReference && relationMetadata.EntityReferenceAttribute != null)
                     {
                         _referenceRelations.Add((relationMetadata, relationMetadata.EntityReferenceAttribute));
                     }
-
-                    
                 }
                 //else if (propertyInfo.PropertyType.IsSubclassOf(_relationDescriptorBaseType))
                 //{

@@ -1,4 +1,5 @@
-﻿using QGate.Eaf.Domain.Metadatas.Models;
+﻿using QGate.Eaf.Core.Metadatas.Services;
+using QGate.Eaf.Domain.Metadatas.Models;
 using System.Linq;
 using System.Reflection;
 
@@ -8,6 +9,9 @@ namespace QGate.Eaf.Core.Infrastructure
     {
         public void Boot(params Assembly[] metadataAssemblies)
         {
+            //TODO move registration to shared part dependency config for all platforms
+            Domain.Infrastructure.Ioc.ServiceLocator.EntityDescriptorFactory = new EntityDescriptorFactory();
+
             var entityDescriptorType = typeof(IEntityDescriptor);
             foreach (var assembly in metadataAssemblies)
             {

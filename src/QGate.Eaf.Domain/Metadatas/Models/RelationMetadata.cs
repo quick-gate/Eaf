@@ -25,5 +25,11 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         /// </summary>
         public bool IsReference { get; set; }
 
+        //public RelationMetadata SetEntityReference(EntityDescriptor entityDescriptor, [CallerMemberName] string attributeName="")
+        //{
+            
+        //    return this;
+        //}
+
     }
 }

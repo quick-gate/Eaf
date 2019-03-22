@@ -1,4 +1,5 @@
 ﻿using QGate.Eaf.Domain.Exceptions;
+using QGate.Eaf.Domain.Metadatas.Services;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -7,20 +8,42 @@ namespace QGate.Eaf.Domain.Metadatas.Models
 {
     public abstract class EntityDescriptor: IEntityDescriptor
     {
-        private static IDictionary<Type, EntityDescriptor> _entityDescriptors = new Dictionary<Type, EntityDescriptor>();
+        
+        private static IDictionary<object, RelationDescriptor> _relationDescriptorDictionary = new Dictionary<object, RelationDescriptor>();
 
-        public EntityDescriptor(Type entityType)
+        private IDictionary<string, RelationDescriptor> _relationDescriptors = new Dictionary<string, RelationDescriptor>();
+        private static readonly IEntityDescriptorFactory _entityDescriptorFactory = Infrastructure.Ioc.ServiceLocator.EntityDescriptorFactory;
+        protected EntityDescriptor(Type entityType)
         {
-            var descriptorType = GetType();
-            if (!_entityDescriptors.ContainsKey(descriptorType))
+            if(this is IEntityDescriptorContext)
             {
-                _entityDescriptors.Add(descriptorType, this);
-                Entity = new EntityMetadata
-                {
-                    Type = entityType
-                };
+                //todo RESOLVE BETTER
+                Entity = new EntityMetadata();
+                return;
             }
+            _entityDescriptorFactory.Add(this);
+
+            Entity = new EntityMetadata
+            {
+                Type = entityType
+            };
         }
+
+        //protected EntityDescriptor<TRelatedEntity> Get<TRelatedEntity>(Func<EntityDescriptor<TRelatedEntity>> getRelatedEntity, [CallerMemberName]string name = "") where TRelatedEntity: EntityDescriptor<TRelatedEntity>
+        //{
+        //    if (_relations.TryGetValue(name, out RelationDescriptor relation))
+        //    {
+        //        return relation as EntityDescriptor<TRelatedEntity>;
+        //    }
+
+        //    var relationDescriptor = getRelatedEntity.Invoke() as RelationDescriptor;
+        //    var metadata = relationDescriptor.Metadata;
+        //    FillMetadataName(metadata, name);
+        //    Entity.AddRelation(metadata);
+        //    _relations.Add(name, relationDescriptor);
+
+        //    return relationDescriptor as TMetadata;
+        //}
 
         /// <summary>
         /// Has to be called only from descriptor because of caller member name
@@ -29,7 +52,7 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         /// <param name="getMetadata"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        protected TMetadata Get<TMetadata>(Func<TMetadata> getMetadata, [CallerMemberName]string name = "") where TMetadata : class
+        protected virtual TMetadata Get<TMetadata>(Func<TMetadata> getMetadata, [CallerMemberName]string name = "") where TMetadata : class
         {
             if (getMetadata is Func<AttributeMetadata>)
             {
@@ -56,6 +79,42 @@ namespace QGate.Eaf.Domain.Metadatas.Models
                 Entity.AddRelation(metadata);
                 return metadata as TMetadata;
             }
+            else if(getMetadata is Func<RelationDescriptor>)
+            {
+
+                if (_relationDescriptors.TryGetValue(name, out RelationDescriptor relation))
+                {
+                    return relation as TMetadata;
+                }
+
+                var relationDescriptor = getMetadata.Invoke() as RelationDescriptor;
+
+                var metadata = relationDescriptor.Metadata;
+
+                FillMetadataName(metadata, name);
+
+                Entity.AddRelation(metadata);
+
+              
+                _relationDescriptors.Add(name, relationDescriptor);
+                                
+                return relationDescriptor as TMetadata;
+                //if (Entity.TryGetRelation(name, out RelationMetadata metadata))
+                //{
+                //    //TODO resolve retun descriptor instead of Metadata
+                //    return _relationDescriptorDictionary[metadata] as TMetadata;
+                //    return metadata as TMetadata;
+                //}
+
+                //var relationDescriptor = getMetadata.Invoke() as RelationDescriptor;
+                //metadata = relationDescriptor.Metadata;
+                //FillMetadataName(metadata, name);
+                //Entity.AddRelation(metadata);
+
+                //_relationDescriptorDictionary.Add(metadata, relationDescriptor);
+
+                //return relationDescriptor as TMetadata;
+            }
 
             //TODO Improve exception
             throw new EafException("Cannot create Attribute");
@@ -66,25 +125,31 @@ namespace QGate.Eaf.Domain.Metadatas.Models
             metadata.Name = name;
         }
 
-        public Type EntityType { get; set; }
+        public virtual Type EntityType { get; set; }
 
         public static IEnumerable<EntityDescriptor> GetDescriptors()
         {
-            return _entityDescriptors.Values;
+            return _entityDescriptorFactory.GetDescriptors();
         }
 
         public static TEntityDescriptor Get<TEntityDescriptor>() where TEntityDescriptor : EntityDescriptor
         {
-            var descriptorType = typeof(TEntityDescriptor);
-            _entityDescriptors.TryGetValue(descriptorType, out EntityDescriptor descriptor);
+            var descriptor = _entityDescriptorFactory.Get<TEntityDescriptor>();
             if (descriptor == null)
             {
                 descriptor = Activator.CreateInstance<TEntityDescriptor>();
             }
 
-            return descriptor as TEntityDescriptor;
+            return descriptor;
         }
 
-        public EntityMetadata Entity { get; private set; }
+        public static TEntityDescriptor Get<TEntityDescriptor>(IEntityDescriptorContext context) where TEntityDescriptor : EntityDescriptor
+        {
+            return _entityDescriptorFactory.Get(Get<TEntityDescriptor>(), context);
+        }
+
+        public virtual EntityMetadata Entity { get; private set; }
+
+        
     }
 }
