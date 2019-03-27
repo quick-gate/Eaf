@@ -6,5 +6,7 @@
         /// Owner of attribute or relation
         /// </summary>
         public EntityMetadata Owner { get; set; }
+
+        public string Path { get; set; }
     }
 }

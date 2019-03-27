@@ -60,7 +60,6 @@ namespace QGate.Eaf.Core.Metadatas.Services
             }
         }
 
-
         private void MapDescriptorToMetadata(EntityDescriptor descriptor)
         {
             var descriptorType = descriptor.GetType();
