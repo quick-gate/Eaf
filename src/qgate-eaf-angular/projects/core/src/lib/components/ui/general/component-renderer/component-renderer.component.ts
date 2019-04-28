@@ -3,6 +3,8 @@ import { ComponentBase } from 'projects/core/src/lib/dtos/QGate/Eaf/Domain/Compo
 import { TextBox } from 'projects/core/src/lib/dtos/QGate/Eaf/Domain/Components/Editors/TextBox.model';
 import { ComponentType } from 'projects/core/src/lib/dtos/QGate/Eaf/Domain/Components/General/ComponentType.enum';
 import { EntitySelector } from 'projects/core/src/lib/dtos/QGate/Eaf/Domain/Components/Entities/EntitySelector.model';
+import { EntityDetailComponent } from '../../../entities/entity-detail/entity-detail.component';
+import { EntityList } from 'projects/core/src/lib/dtos/QGate/Eaf/Domain/Components/Entities/EntityList.model';
 
 @Component({
   selector: 'eaf-component-renderer',
@@ -14,6 +16,7 @@ export class ComponentRendererComponent implements OnInit {
   @Input() component: ComponentBase;
   textBox: TextBox;
   entitySelector: EntitySelector;
+  entityList: EntityList;
   constructor() { }
 
   ngOnInit() {
@@ -25,7 +28,13 @@ export class ComponentRendererComponent implements OnInit {
     if (this.component.Type === ComponentType.EntitySelector) {
       this.entitySelector = <EntitySelector> this.component;
       return;
-    }    
+    }
+
+    if (this.component.Type === ComponentType.EntityList) {
+      this.entityList = <EntityList> this.component;
+      this.entityList.Entities = this.model[this.entityList.Binding.PropertyPath[0]];
+      return;
+    }
   }
 
 }

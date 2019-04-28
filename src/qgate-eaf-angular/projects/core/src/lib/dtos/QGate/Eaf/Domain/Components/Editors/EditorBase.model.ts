@@ -6,4 +6,5 @@ import { ComponentBase } from '../General/ComponentBase.model';
 
 export abstract class EditorBase extends ComponentBase
 {
+	public IsReadOnly: boolean;
 }

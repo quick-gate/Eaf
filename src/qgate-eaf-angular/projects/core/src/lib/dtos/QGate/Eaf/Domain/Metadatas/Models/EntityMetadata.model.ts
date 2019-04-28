@@ -10,4 +10,5 @@ export class EntityMetadata extends MetadataBase
 {
 	public Attributes: AttributeMetadata[];
 	public Relations: RelationMetadata[];
+	public RelationInfos: any[];
 }

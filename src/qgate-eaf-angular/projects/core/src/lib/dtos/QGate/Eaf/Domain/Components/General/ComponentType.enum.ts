@@ -4,5 +4,6 @@
 
 export enum ComponentType { 
 	TextBox = 0, 
-	EntitySelector = 1
+	EntitySelector = 1, 
+	EntityList = 2
 }

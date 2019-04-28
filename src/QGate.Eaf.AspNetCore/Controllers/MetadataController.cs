@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace QGate.Eaf.AspNetCore.Controllers
 {
     [Route(BaseUrl + "metadatas")]
-    public class MetadataController: ControllerBase
+    public class MetadataController : ControllerBase
     {
         private readonly IMetadataService _metadataService;
 

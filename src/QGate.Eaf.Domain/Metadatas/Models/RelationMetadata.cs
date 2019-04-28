@@ -16,6 +16,8 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         /// Keys from current Entity
         /// </summary>
         public IList<AttributeMetadata> Keys { get; set; }
+        public IList<RelationAttribute> Attributes { get; set; }
+        public bool IsComposition { get; set; }
         /// <summary>
         /// Relation Type
         /// </summary>

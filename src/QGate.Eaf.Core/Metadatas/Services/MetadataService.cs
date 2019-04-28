@@ -5,7 +5,9 @@ using QGate.Eaf.Domain.Metadatas.Models;
 using QGate.Eaf.Domain.Metadatas.Models.Params;
 using QGate.Eaf.Domain.Metadatas.Services;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace QGate.Eaf.Core.Metadatas.Services
@@ -13,12 +15,13 @@ namespace QGate.Eaf.Core.Metadatas.Services
     public class MetadataService : IMetadataService
     {
         private static IDictionary<string, EntityMetadata> _entityMetadataDictionary = new Dictionary<string, EntityMetadata>();
-        private IList<(RelationMetadata relation, RelationReferenceMetadata relationReference)> _referenceRelations = new List<(RelationMetadata relation, RelationReferenceMetadata relationReference)>();
+        private IList<RelationInfo> _relationInfos = new List<RelationInfo>();
         private readonly Type AttributeMetadataType = typeof(AttributeMetadata);
         //private Type RelationMetadataType = typeof(RelationMetadata);
         private readonly Type EntityDescriptorType = typeof(EntityDescriptor);
         //TODO add to configuration
         private readonly string _defaultLanguage = LanguageCodes.en;
+        private static Type _enumerableType = typeof(IEnumerable);
 
         private static bool _isInitialized;
 
@@ -43,10 +46,31 @@ namespace QGate.Eaf.Core.Metadatas.Services
                 MapDescriptorToMetadata(descriptor);
             }
 
-            foreach (var referenceRelations in _referenceRelations)
+            foreach (var referenceInfo in _relationInfos)
             {
-                referenceRelations.relationReference.Entity = referenceRelations.relation.Owner;
-                
+                referenceInfo.RelationReference.Entity = referenceInfo.Relation.Owner;
+
+                if (referenceInfo.Relation.RelationType == RelationType.OneToOne)
+                {
+                    referenceInfo.RelationReference.Attributes = GetRelationReferenceAttributes(referenceInfo.Relation);
+                    referenceInfo.RelationReference.IsComposition = true;
+                    if (_enumerableType.IsAssignableFrom(referenceInfo.RelationReference.Type))
+                    {
+                        referenceInfo.RelationReference.RelationType = RelationType.OneToMany;
+                    }
+                    else
+                    {
+                        referenceInfo.RelationReference.RelationType = RelationType.OneToOneInverted;
+                        referenceInfo.RelationReference.Keys = referenceInfo.Relation.Keys;
+                    }
+
+                    //foreach (var key in referenceRelations.relation.Keys)
+                    //{
+
+                    //}
+                }
+
+
                 //relation.Entity
 
                 //entityMetadata.Relations.Add(new RelationMetadata
@@ -58,6 +82,20 @@ namespace QGate.Eaf.Core.Metadatas.Services
                 //    IsReference = true
                 //});
             }
+        }
+
+        /// <summary>
+        /// Inverts relation attributes
+        /// </summary>
+        /// <param name="relationAttributes"></param>
+        /// <returns></returns>
+        private IList<RelationAttribute> GetRelationReferenceAttributes(RelationMetadata relation)
+        {
+            return relation.Attributes.Select(
+                            x =>
+                            {
+                                return new RelationAttribute(x.LinkedAttribute, x.Attribute);
+                            }).ToList();
         }
 
         private void MapDescriptorToMetadata(EntityDescriptor descriptor)
@@ -156,10 +194,19 @@ namespace QGate.Eaf.Core.Metadatas.Services
 
                     relationMetadata.Name = propertyInfo.Name;
 
+                    var relationInfo = new RelationInfo(relationMetadata);
+                    entityMetadata.RelationInfos.Add(relationInfo);
+
+                    //TODO move to the same place as attribute is
+                    relationMetadata.Type = entityMetadata.Type.GetProperty(relationMetadata.Name).PropertyType;
+
                     if (!relationMetadata.IsReference && relationMetadata.EntityReferenceAttribute != null)
                     {
-                        _referenceRelations.Add((relationMetadata, relationMetadata.EntityReferenceAttribute));
+                        relationInfo.RelationReference = relationMetadata.EntityReferenceAttribute;
+
+                        _relationInfos.Add(relationInfo);
                     }
+
                 }
                 //else if (propertyInfo.PropertyType.IsSubclassOf(_relationDescriptorBaseType))
                 //{

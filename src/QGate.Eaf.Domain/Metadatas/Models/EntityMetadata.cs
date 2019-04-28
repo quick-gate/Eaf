@@ -6,6 +6,7 @@ namespace QGate.Eaf.Domain.Metadatas.Models
     {
         public IList<AttributeMetadata> Attributes { get; } = new List<AttributeMetadata>();
         public IList<RelationMetadata> Relations { get; } = new List<RelationMetadata>();
+        public IList<RelationInfo> RelationInfos { get; } = new List<RelationInfo>();
         private IDictionary<string, AttributeMetadata> _attributeDictionary { get; } = new Dictionary<string, AttributeMetadata>();
         private IDictionary<string, RelationMetadata> _relationDictionary { get; } = new Dictionary<string, RelationMetadata>();
 

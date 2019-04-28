@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json.Linq;
 using QGate.Core.Collections;
 using QGate.Core.Exceptions;
@@ -104,34 +103,67 @@ namespace QGate.Eaf.Core.Entities.Services
 
             foreach (var attribute in entityMetadata.Attributes)
             {
-                result.EntityDetail.Components.Add(FillComponentBase(new TextBox(), attribute));
-            }
-
-            if (!entityMetadata.Relations.IsNullOrEmpty())
-            {
-                foreach (var relation in entityMetadata.Relations)
+                if (attribute.IsRelationKey)
                 {
-                    if(relation.RelationType == RelationType.OneToMany)
-                    {
-                        //TODO Implement it
-                        continue;
-                    }
-
-                    var entitySelector = FillComponentBase(new EntitySelector(), relation);
-                    entitySelector.EntityName = relation.Entity.Name;
-                    //TODO define better condition for display attributes
-                    entitySelector.DisplayAttributes = relation.Entity.Attributes.Select(x => x.Name).Take(2).ToList();
-                    result.EntityDetail.Components.Add(entitySelector);
-                    
+                    continue;
                 }
+                result.EntityDetail.Components.Add(FillComponentBase(new TextBox { IsReadOnly = attribute.IsKey }, attribute));
             }
+
+            if (entityMetadata.Relations.IsNullOrEmpty())
+            {
+                return result;
+            }
+
+
+            foreach (var relationInfo in entityMetadata.RelationInfos)
+            {
+                var relation = relationInfo.Relation;
+                if (relationInfo.RelationReference != null && relationInfo.RelationReference.IsComposition)
+                {
+                    //Relation in composition will not be rendered because is not allowed change owner
+                    continue;
+                }
+
+                if (relation.RelationType == RelationType.OneToMany)
+                {
+                    var entityList = FillComponentBase(new EntityList(), relation);
+                    entityList.Attributes = GetEntityListAttributes(relation.Entity);
+                    entityList.RelationAttributes = GetRelationAttributes(relation);
+                    entityList.EntityName = relation.Entity.Name;
+                    result.EntityDetail.Components.Add(entityList);
+                    continue;
+                }
+
+
+
+                var entitySelector = FillComponentBase(new EntitySelector(), relation);
+                entitySelector.EntityName = relation.Entity.Name;
+                //TODO define better condition for display attributes
+                entitySelector.DisplayAttributes = relation.Entity.Attributes.Select(x => x.Name).Take(2).ToList();
+                if (!relation.Attributes.IsNullOrEmpty())
+                {
+                    entitySelector.RelationAttributes = GetRelationAttributes(relation);
+                }
+                entitySelector.IsComposition = relation.IsComposition;
+                entitySelector.IsInverted = relation.RelationType == RelationType.OneToOneInverted;
+                //entitySelector.KeyAttributes = relation.Keys.Select(x => x.Name).ToList();
+                result.EntityDetail.Components.Add(entitySelector);
+
+            }
+
 
 
 
             return result;
         }
 
-        private TComponent FillComponentBase<TComponent>(TComponent component, MetadataBase attribute) where TComponent: ComponentBase
+        private IList<RelationAttributeDto> GetRelationAttributes(RelationMetadata relation)
+        {
+            return relation.Attributes.Select(x => new RelationAttributeDto(x.Attribute.Name, x.LinkedAttribute.Name)).ToList();
+        }
+
+        private TComponent FillComponentBase<TComponent>(TComponent component, MetadataBase attribute) where TComponent : ComponentBase
         {
             component.Caption = attribute.Translations?.FirstOrDefault().Name;
             component.Binding = new ComponentBinding { PropertyPath = new List<string> { attribute.Name } };
@@ -151,14 +183,7 @@ namespace QGate.Eaf.Core.Entities.Services
         public GetEntityListResult GetEntityList(GetEntityListParams parameters)
         {
             var entityMetadata = GetEntityMetadata(parameters);
-
-            var entityListAttributes = new List<EntityListAttribute>();
-
-            foreach (var attribute in entityMetadata.Attributes)
-            {
-                entityListAttributes.Add(MapEntityListAttribute(attribute));
-            }
-
+            var entityListAttributes = GetEntityListAttributes(entityMetadata);
 
             var query = GetEntityListQuery(entityMetadata);
             List<dynamic> entities = query.ToDynamicList();
@@ -174,6 +199,18 @@ namespace QGate.Eaf.Core.Entities.Services
 
             return result;
 
+        }
+
+        private List<EntityListAttribute> GetEntityListAttributes(EntityMetadata entityMetadata)
+        {
+            var entityListAttributes = new List<EntityListAttribute>();
+
+            foreach (var attribute in entityMetadata.Attributes)
+            {
+                entityListAttributes.Add(MapEntityListAttribute(attribute));
+            }
+
+            return entityListAttributes;
         }
 
         private IQueryable GetEntityListQuery(EntityMetadata entityMetadata)

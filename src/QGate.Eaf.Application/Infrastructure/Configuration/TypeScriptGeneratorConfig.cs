@@ -53,7 +53,8 @@ namespace QGate.Eaf.Application.Infrastructure.Configuration
                 typeof(EditorBase),
                 typeof(TextBox),
                 typeof(EntityDetail),
-                typeof(EntitySelector)
+                typeof(EntitySelector),
+                typeof(RelationAttributeDto)
             },
             new List<Type>
             {

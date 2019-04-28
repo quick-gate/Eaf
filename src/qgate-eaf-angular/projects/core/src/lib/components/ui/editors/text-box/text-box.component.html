@@ -1,2 +1,2 @@
 <label [for]="name">{{component.Caption}}</label>
-<input type="text" [name]="name" [(ngModel)]="model" (ngModelChange)="modelChange.emit(model)"/>
+<input type="text" [name]="name" [readOnly]="component.IsReadOnly" [(ngModel)]="model" (ngModelChange)="modelChange.emit(model)"/>

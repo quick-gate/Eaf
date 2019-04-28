@@ -3,6 +3,7 @@
     public enum ComponentType
     {
         TextBox,
-        EntitySelector
+        EntitySelector,
+        EntityList
     }
 }

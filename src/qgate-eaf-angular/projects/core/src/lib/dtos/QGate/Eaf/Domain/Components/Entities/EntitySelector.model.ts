@@ -3,11 +3,14 @@
 //     the code is regenerated.
 
 import { ComponentBase } from '../General/ComponentBase.model';
+import { RelationAttributeDto } from './RelationAttributeDto.model';
 
 export class EntitySelector extends ComponentBase
 {
 	public EntityName: string;
 	public DisplayAttributes: string[];
+	public IsComposition: boolean;
 	public KeyAttributes: string[];
-	public RelationAttributes: string[];
+	public RelationAttributes: RelationAttributeDto[];
+	public IsInverted: boolean;
 }

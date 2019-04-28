@@ -4,6 +4,9 @@ import { EntityService } from '../../../services/entities/entity.service';
 import { GetEntityDetailParams } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/Params/GetEntityDetailParams.model';
 import { EntityDetail } from '../../../dtos/QGate/Eaf/Domain/Components/Entities/EntityDetail.model';
 import { SaveEntityParams } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/Params/SaveEntityParams.model';
+import { ComponentType } from '../../../dtos/QGate/Eaf/Domain/Components/General/ComponentType.enum';
+import { EntitySelector } from '../../../dtos/QGate/Eaf/Domain/Components/Entities/EntitySelector.model';
+import { SaveEntityResult } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/Params/SaveEntityResult.model';
 
 @Component({
   selector: 'eaf-entity-detail',
@@ -16,10 +19,11 @@ export class EntityDetailComponent implements OnInit {
   @Input() entityName: string;
   @Input() autogenerate = true;
   @Input() keys: AttributeValue[];
-  @Output() onOkClick = new EventEmitter<any>();
+  @Output() okClick = new EventEmitter<any>();
+  @Output() entityLoaded = new EventEmitter<any>();
 
   model: EntityDetail;
-
+  isNew = false;
 
   constructor(private entityService: EntityService) { }
 
@@ -33,9 +37,18 @@ export class EntityDetailComponent implements OnInit {
     this.model = await this.entityService.GetEntityDetail(params);
 
     this.customTemplateContext = { $implicit: this.model };
+
+    this.entityLoaded.emit(this.model.Entity);
   }
 
-  async onOkClickInternal() {
+  async okClickInternal() {
+
+    const result = await this.saveEntity();
+
+    this.okClick.emit(result.EntityLisItem);
+  }
+
+  async saveEntity(): Promise<SaveEntityResult> {
     const params = new SaveEntityParams();
     params.Entity = this.model.Entity;
     params.EntityName = this.entityName;
@@ -45,9 +58,21 @@ export class EntityDetailComponent implements OnInit {
       params.IsNew = true;
     }
 
-    const result = await this.entityService.SaveEntity(params);
+    for (const component of this.model.Components) {
+      if (component.Type === ComponentType.EntitySelector) {
+        let entitySelector = <EntitySelector>component;
+        if(entitySelector.IsComposition){
+          continue;
+        }
 
-    this.onOkClick.emit(result.EntityLisItem);
+        //TODO refresh property owner
+        //TODO improve path
+        params.Entity[component.Binding.PropertyPath[0]] = null;
+      }
+    }
+
+    return this.entityService.SaveEntity(params);
+
   }
 
   isNewEntity(): boolean {

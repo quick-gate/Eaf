@@ -37,11 +37,17 @@ namespace QGate.Eaf.Data.Ef
 
             entityBuilder.HasKey(entityMetadata.GetKeys().Select(x => x.Name).ToArray());
 
+
             foreach (var attribute in entityMetadata.Attributes)
             {
                 var propertyBuilder = entityBuilder
                     .Property(attribute.Name)
                     .HasColumnName(attribute.StorageName);
+
+                if(attribute.IsKey)
+                {
+                    propertyBuilder.ValueGeneratedOnAdd();
+                }
                 
                 if (attribute.Type == null)
                 {
@@ -65,18 +71,27 @@ namespace QGate.Eaf.Data.Ef
                 //    .WithOne(x=>x.Product)
                 //    .HasForeignKey<ProductDescription>(x => x.ProductId);
 
-                if (relation.RelationType == RelationType.OneToOne)
+                if (relation.RelationType == RelationType.OneToOne || relation.RelationType == RelationType.OneToOneInverted)
                 {
-                    var referenceBuilder = entityBuilder.HasOne(relation.Entity.Type, relation.Name)
-                        .WithOne(relation.EntityReferenceAttribute?.Name)                
-                        .HasForeignKey(entityMetadata.Type, relation.Keys.Select(x => x.Name).ToArray());
+                    if (relation.EntityReferenceAttribute != null && relation.EntityReferenceAttribute.RelationType == RelationType.OneToMany)
+                    {
+                        entityBuilder.HasOne(relation.Entity.Type, relation.Name)
+                            .WithMany(relation.EntityReferenceAttribute.Name)
+                            .HasForeignKey(relation.Attributes.Select(x=>x.Attribute.Name).ToArray());
+                    }
+                    else
+                    {
+                        var referenceBuilder = entityBuilder.HasOne(relation.Entity.Type, relation.Name)
+                            .WithOne(relation.EntityReferenceAttribute?.Name)
+                            .HasForeignKey(entityMetadata.Type, relation.Keys.Select(x => x.Name).ToArray());
+                    }
                 }
-                else if (relation.RelationType == RelationType.OneToMany)
-                {
-                    entityBuilder.HasOne(relation.Entity.Type, relation.Name)
-                        .WithMany(relation.EntityReferenceAttribute?.Name)
-                        .HasForeignKey(relation.Keys.Select(x => x.Name).ToArray());
-                }
+                //else if (relation.RelationType == RelationType.OneToMany)
+                //{
+                //    entityBuilder.HasOne(relation.Entity.Type, relation.Name)
+                //        .WithMany(relation.EntityReferenceAttribute?.Name)
+                //        .HasForeignKey(relation.Keys.Select(x => x.Name).ToArray());
+                //}
                 else
                 {
                     throw new EafException($"Mapping entity {entityMetadata.Name} to model failed. Relation type { relation.RelationType} is not supported.");

@@ -2,10 +2,14 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
+import { ComponentBase } from '../General/ComponentBase.model';
 import { EntityListAttribute } from './EntityListAttribute.model';
+import { RelationAttributeDto } from './RelationAttributeDto.model';
 
-export class EntityList
+export class EntityList extends ComponentBase
 {
 	public Entities: any[];
 	public Attributes: EntityListAttribute[];
+	public RelationAttributes: RelationAttributeDto[];
+	public EntityName: string;
 }

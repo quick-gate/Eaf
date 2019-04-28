@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ViewContainerRef, Inject, ComponentFactoryResolver, ComponentRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ViewContainerRef, Inject, ComponentFactoryResolver, ComponentRef, Output, EventEmitter } from '@angular/core';
 import { EntityService } from '../../../services/entities/entity.service';
 import { EntityList } from '../../../dtos/QGate/Eaf/Domain/Components/Entities/EntityList.model';
 import { GetEntityListParams } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/Params/GetEntityListParams.model';
@@ -13,11 +13,15 @@ import { AttributeValue } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/A
 
 export class EntityListComponent implements OnInit {
   @Input() entityName: string;
+  @Input() isEmbedded = false;
+  @Input() ownerEntity: any;
   @ViewChild('entityDetailContainer', { read: ViewContainerRef }) entityDetailContainer: ViewContainerRef;
-
-  model: EntityList;
+  @Output() selectionDone = new EventEmitter<any>();
+  @Input() model: EntityList;
   entityDetail: EntityDetailComponent;
   entityDetailRef: ComponentRef<EntityDetailComponent>;
+  isSelectionMode = false;
+
   //TODO Add to constants - 1
   private selectedEntityIndex = -1;
   private selectedEntities: any[];
@@ -28,7 +32,9 @@ export class EntityListComponent implements OnInit {
   private componentFactoryResolver: ComponentFactoryResolver) { }
 
   async ngOnInit() {
-
+    if (this.isEmbedded) {
+      return;
+    }
     const params = new GetEntityListParams();
 
     params.EntityName = this.entityName;
@@ -38,7 +44,7 @@ export class EntityListComponent implements OnInit {
 
   async onEditClick(entity: any) {
     this.selectedEntityIndex = this.model.Entities.indexOf(entity);
-    console.log(this.selectedEntityIndex);
+    console.log(this.getEntityKeys(entity));
     await this.showEntityDetail(this.getEntityKeys(entity));
   }
 
@@ -63,33 +69,56 @@ export class EntityListComponent implements OnInit {
   }
 
   async showEntityDetail(keys: Array<AttributeValue>) {
+
+    this.closeEntityDetail();
+
     const factory = this.componentFactoryResolver.resolveComponentFactory(
       EntityDetailComponent
     );
     this.entityDetailRef = this.entityDetailContainer.createComponent(factory);
 
-    var entityDetail = this.entityDetailRef.instance;
+    const entityDetail = this.entityDetailRef.instance;
     entityDetail.entityName = this.entityName;
     entityDetail.keys = keys;
-    entityDetail.onOkClick.subscribe(x => this.onEntityDetailOkClick(x));
+    entityDetail.entityLoaded.subscribe(x => this.onEntityDetailLoaded(x));
+    entityDetail.okClick.subscribe(x => this.onEntityDetailOkClick(x));
+  }
+
+  onEntityDetailLoaded(entity: any) {
+    // Owner key must by assigned to related entity
+    if (this.model.RelationAttributes && this.ownerEntity) {
+      for (const relationAttribute of this.model.RelationAttributes) {
+        entity[relationAttribute.LinkedAttribute] = this.ownerEntity[relationAttribute.Attribute];
+      }
+    }
   }
 
   async onEntityDetailOkClick(entityListItem: any) {
     if (this.selectedEntityIndex > -1) {
       this.model.Entities[this.selectedEntityIndex] = entityListItem;
-    } else  {
+    } else {
       this.model.Entities.push(entityListItem);
     }
 
-    this.entityDetailRef.destroy();
+    this.closeEntityDetail();
   }
 
 
-  onRowDblClick(selectedEtityIndex: number, selectedEntity:any){
-    console.log(selectedEtityIndex);
-    console.log(selectedEntity);
+  onRowDblClick(selectedEtityIndex: number, selectedEntity: any) {
+
+    if (this.isSelectionMode) {
+      this.selectionDone.emit(selectedEntity);
+      return;
+    }
+
+    this.onEditClick(selectedEntity);
+    // console.log(selectedEtityIndex);
+    // console.log(selectedEntity);
   }
 
-
-
+  closeEntityDetail() {
+    if(this.entityDetailRef) {
+      this.entityDetailRef.destroy();
+    }
+  }
 }

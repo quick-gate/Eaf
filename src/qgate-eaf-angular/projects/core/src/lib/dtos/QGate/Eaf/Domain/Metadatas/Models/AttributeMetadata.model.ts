@@ -5,5 +5,6 @@
 export class AttributeMetadata
 {
 	public IsKey: boolean;
+	public IsRelationKey: boolean;
 	public AttributeType: any;
 }

@@ -7,5 +7,7 @@ namespace QGate.Eaf.Domain.Components.Editors
         public EditorBase(ComponentType type) : base(type)
         {
         }
+
+        public bool IsReadOnly { get; set; }
     }
 }

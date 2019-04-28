@@ -6,10 +6,10 @@ namespace QGate.Eaf.AspNetCore.Infrastructure.Mvc
 {
     public static class ServiceCollectionExtensions
     {
-        
+
         public static EafAppConfig AddEaf(this IServiceCollection services)
         {
-            services.AddMvc().AddApplicationPart(typeof(EntityController).Assembly)
+            services.AddMvcCore().AddApplicationPart(typeof(EntityController).Assembly)
                 .AddControllersAsServices();
 
             return new EafAppConfig(
