@@ -9,6 +9,10 @@
         public bool IsRelationKey { get; set; }
 
         public AttributeType AttributeType { get; set; }
+        /// <summary>
+        /// Determines max length of string values
+        /// </summary>
+        public int? Length { get; set; }
 
     }
 }

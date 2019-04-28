@@ -44,6 +44,11 @@ namespace QGate.Eaf.Data.Ef
                     .Property(attribute.Name)
                     .HasColumnName(attribute.StorageName);
 
+                if(attribute.Length.HasValue)
+                {
+                    propertyBuilder.HasMaxLength(attribute.Length.Value);
+                }
+
                 if(attribute.IsKey)
                 {
                     propertyBuilder.ValueGeneratedOnAdd();
@@ -53,6 +58,7 @@ namespace QGate.Eaf.Data.Ef
                 {
                     continue;
                 }
+               
 
                 if (attribute.AttributeType.Length.HasValue)
                 {
