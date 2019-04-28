@@ -4,6 +4,7 @@ import { EntityList } from '../../../dtos/QGate/Eaf/Domain/Components/Entities/E
 import { GetEntityListParams } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/Params/GetEntityListParams.model';
 import { EntityDetailComponent } from '../entity-detail/entity-detail.component';
 import { AttributeValue } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/AttributeValue.model';
+import { EntityUiService } from '../../../services/entities/entity-ui.service';
 
 @Component({
   selector: 'eaf-entity-list',
@@ -29,7 +30,7 @@ export class EntityListComponent implements OnInit {
 
 
   constructor(private entityService: EntityService, @Inject(ComponentFactoryResolver)
-  private componentFactoryResolver: ComponentFactoryResolver) { }
+  private componentFactoryResolver: ComponentFactoryResolver, private entityUiService: EntityUiService) { }
 
   async ngOnInit() {
     if (this.isEmbedded) {
@@ -44,15 +45,14 @@ export class EntityListComponent implements OnInit {
 
   async onEditClick(entity: any) {
     this.selectedEntityIndex = this.model.Entities.indexOf(entity);
-    console.log(this.getEntityKeys(entity));
     await this.showEntityDetail(this.getEntityKeys(entity));
   }
 
   getEntityKeys(entity: any): Array<AttributeValue> {
-    var keys = new Array<AttributeValue>();
+    const keys = new Array<AttributeValue>();
     for (const attribute of this.model.Attributes) {
       if (attribute.IsKey) {
-        var keyValue = new AttributeValue();
+        const keyValue = new AttributeValue();
         keyValue.Name = attribute.Name;
         keyValue.Value = entity[attribute.Name];
 
@@ -86,11 +86,7 @@ export class EntityListComponent implements OnInit {
 
   onEntityDetailLoaded(entity: any) {
     // Owner key must by assigned to related entity
-    if (this.model.RelationAttributes && this.ownerEntity) {
-      for (const relationAttribute of this.model.RelationAttributes) {
-        entity[relationAttribute.LinkedAttribute] = this.ownerEntity[relationAttribute.Attribute];
-      }
-    }
+    this.entityUiService.fillParentKeysToChild(this.model.RelationAttributes, this.ownerEntity, entity);
   }
 
   async onEntityDetailOkClick(entityListItem: any) {
@@ -112,12 +108,10 @@ export class EntityListComponent implements OnInit {
     }
 
     this.onEditClick(selectedEntity);
-    // console.log(selectedEtityIndex);
-    // console.log(selectedEntity);
   }
 
   closeEntityDetail() {
-    if(this.entityDetailRef) {
+    if (this.entityDetailRef) {
       this.entityDetailRef.destroy();
     }
   }

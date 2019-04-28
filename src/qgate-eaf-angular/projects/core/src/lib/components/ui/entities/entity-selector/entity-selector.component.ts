@@ -4,6 +4,7 @@ import { EntityListComponent } from '../../../entities/entity-list/entity-list.c
 import { EntityService } from 'projects/core/src/lib/services/entities/entity.service';
 import { EntityDetailComponent } from '../../../entities/entity-detail/entity-detail.component';
 import { AttributeValue } from 'projects/core/src/lib/dtos/QGate/Eaf/Domain/Entities/Models/AttributeValue.model';
+import { EntityUiService } from 'projects/core/src/lib/services/entities/entity-ui.service';
 
 @Component({
   selector: 'eaf-entity-selector',
@@ -25,7 +26,7 @@ export class EntitySelectorComponent implements OnInit {
 
   value: any;
   constructor(private entityService: EntityService, @Inject(ComponentFactoryResolver)
-  private componentFactoryResolver: ComponentFactoryResolver) { }
+  private componentFactoryResolver: ComponentFactoryResolver, private entityUiService: EntityUiService) { }
 
   ngOnInit() {
     this.fillEntity();
@@ -99,10 +100,8 @@ export class EntitySelectorComponent implements OnInit {
 
   onEntityDetailLoaded(entity: any) {
     // Is Inverted OneToOne relation. Owner key must by assigned to related entity
-    if (this.component.IsInverted && entity && this.component.RelationAttributes && this.ownerEntity) {
-      for (const relationAttribute of this.component.RelationAttributes) {
-        entity[relationAttribute.LinkedAttribute] = this.ownerEntity[relationAttribute.Attribute];
-      }
+    if (this.component.IsInverted) {
+      this.entityUiService.fillParentKeysToChild(this.component.RelationAttributes, this.ownerEntity, entity);
     }
   }
 

@@ -12,10 +12,6 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         /// Reference attribute (Navigation property) from related entity
         /// </summary>
         public RelationReferenceMetadata EntityReferenceAttribute { get; set; }
-        /// <summary>
-        /// Keys from current Entity
-        /// </summary>
-        public IList<AttributeMetadata> Keys { get; set; }
         public IList<RelationAttribute> Attributes { get; set; }
         public bool IsComposition { get; set; }
         /// <summary>
@@ -26,12 +22,5 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         /// Determines whether is Reference (Navigation property) attribute.
         /// </summary>
         public bool IsReference { get; set; }
-
-        //public RelationMetadata SetEntityReference(EntityDescriptor entityDescriptor, [CallerMemberName] string attributeName="")
-        //{
-            
-        //    return this;
-        //}
-
     }
 }

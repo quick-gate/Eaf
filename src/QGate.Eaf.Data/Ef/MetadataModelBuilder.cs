@@ -83,22 +83,14 @@ namespace QGate.Eaf.Data.Ef
                     {
                         var referenceBuilder = entityBuilder.HasOne(relation.Entity.Type, relation.Name)
                             .WithOne(relation.EntityReferenceAttribute?.Name)
-                            .HasForeignKey(entityMetadata.Type, relation.Keys.Select(x => x.Name).ToArray());
+                            .HasForeignKey(entityMetadata.Type, relation.Attributes.Select(x => x.Attribute.Name).ToArray());
                     }
                 }
-                //else if (relation.RelationType == RelationType.OneToMany)
-                //{
-                //    entityBuilder.HasOne(relation.Entity.Type, relation.Name)
-                //        .WithMany(relation.EntityReferenceAttribute?.Name)
-                //        .HasForeignKey(relation.Keys.Select(x => x.Name).ToArray());
-                //}
                 else
                 {
                     throw new EafException($"Mapping entity {entityMetadata.Name} to model failed. Relation type { relation.RelationType} is not supported.");
                 }
             }
-
-            
         }
     }
 }

@@ -61,26 +61,8 @@ namespace QGate.Eaf.Core.Metadatas.Services
                     else
                     {
                         referenceInfo.RelationReference.RelationType = RelationType.OneToOneInverted;
-                        referenceInfo.RelationReference.Keys = referenceInfo.Relation.Keys;
                     }
-
-                    //foreach (var key in referenceRelations.relation.Keys)
-                    //{
-
-                    //}
                 }
-
-
-                //relation.Entity
-
-                //entityMetadata.Relations.Add(new RelationMetadata
-                //{
-                //    Name = relation.AttributeName,
-                //    Entity = relation.Owner,
-                //    AttributeName = relation.AttributeName,
-                //    RelationType = relation.RelationType,
-                //    IsReference = true
-                //});
             }
         }
 

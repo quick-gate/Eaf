@@ -3,13 +3,11 @@
 //     the code is regenerated.
 
 import { EntityMetadata } from './EntityMetadata.model';
-import { AttributeMetadata } from './AttributeMetadata.model';
 
 export class RelationMetadata
 {
 	public Entity: EntityMetadata;
 	public EntityReferenceAttribute: any;
-	public Keys: AttributeMetadata[];
 	public Attributes: any[];
 	public IsComposition: boolean;
 	public RelationType: number;
