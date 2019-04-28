@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
+using QGate.Core.Types;
 namespace QGate.Eaf.Core.Metadatas.Services
 {
     public class MetadataService : IMetadataService
@@ -21,7 +21,6 @@ namespace QGate.Eaf.Core.Metadatas.Services
         private readonly Type EntityDescriptorType = typeof(EntityDescriptor);
         //TODO add to configuration
         private readonly string _defaultLanguage = LanguageCodes.en;
-        private static Type _enumerableType = typeof(IEnumerable);
 
         private static bool _isInitialized;
 
@@ -54,7 +53,7 @@ namespace QGate.Eaf.Core.Metadatas.Services
                 {
                     referenceInfo.RelationReference.Attributes = GetRelationReferenceAttributes(referenceInfo.Relation);
                     referenceInfo.RelationReference.IsComposition = true;
-                    if (_enumerableType.IsAssignableFrom(referenceInfo.RelationReference.Type))
+                    if (referenceInfo.RelationReference.Type.IsCollection())
                     {
                         referenceInfo.RelationReference.RelationType = RelationType.OneToMany;
                     }
@@ -65,6 +64,7 @@ namespace QGate.Eaf.Core.Metadatas.Services
                 }
             }
         }
+
 
         /// <summary>
         /// Inverts relation attributes
@@ -176,10 +176,13 @@ namespace QGate.Eaf.Core.Metadatas.Services
 
                     relationMetadata.Name = propertyInfo.Name;
 
+                    relationMetadata.RelationType = propertyInfo.PropertyType.IsCollection() ?
+                        RelationType.OneToMany : RelationType.OneToOne;
+                    
+
                     var relationInfo = new RelationInfo(relationMetadata);
                     entityMetadata.RelationInfos.Add(relationInfo);
 
-                    //TODO move to the same place as attribute is
                     relationMetadata.Type = entityMetadata.Type.GetProperty(relationMetadata.Name).PropertyType;
 
                     if (!relationMetadata.IsReference && relationMetadata.EntityReferenceAttribute != null)
