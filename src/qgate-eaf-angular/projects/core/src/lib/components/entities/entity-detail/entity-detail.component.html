@@ -1,11 +1,12 @@
-<ng-container *ngIf="model">
-  <ng-container *ngIf="autogenerate">
+<eaf-dialog *ngIf="model" [title]="model.EntityCaption" [(isVisible)]="isVisible">
+  <ng-container *ngIf="model">
+    <ng-container *ngIf="autogenerate">
       <div *ngFor="let component of model.Components">
-          <eaf-component-renderer [model]="model.Entity" [component]="component"></eaf-component-renderer>
-        </div>
+        <eaf-component-renderer [model]="model.Entity" [component]="component"></eaf-component-renderer>
+      </div>
+    </ng-container>
+
+    <ng-template *ngTemplateOutlet="customTemplate; context: customTemplateContext"></ng-template>
+    <button class="btn btn-default" (click)="okClickInternal()">OK</button>
   </ng-container>
-
-  <ng-template *ngTemplateOutlet="customTemplate; context: customTemplateContext"></ng-template>
-  <button class="btn btn-default" (click)="okClickInternal()">OK</button>
-</ng-container>
-
+</eaf-dialog>

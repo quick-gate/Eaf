@@ -79,6 +79,7 @@ export class EntitySelectorComponent implements OnInit {
       }
       this.entityDetail.entityLoaded.subscribe(x => this.onEntityDetailLoaded(x));
       this.entityDetail.okClick.subscribe(x => this.onSelectionDone(x));
+      this.entityDetail.open();
       return;
     }
 
@@ -91,6 +92,7 @@ export class EntitySelectorComponent implements OnInit {
     this.entityList.entityName = this.component.EntityName;
     this.entityList.isSelectionMode = true;
     this.entityList.selectionDone.subscribe(x => this.onSelectionDone(x));
+    this.entityList.openAsDialog();
     // entityList.onOkClick.subscribe(x => this.onEntityDetailOkClick(x));
   }
 

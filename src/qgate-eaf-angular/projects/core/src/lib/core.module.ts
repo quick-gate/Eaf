@@ -13,17 +13,21 @@ import { UiComponentFactoryComponent } from './components/ui/general/ui-componen
 import { ComponentRendererComponent } from './components/ui/general/component-renderer/component-renderer.component';
 import { EntityDetailTemplateComponent } from './components/entities/entity-detail/entity-detail-template/entity-detail-template.component';
 import { EntitySelectorComponent } from './components/ui/entities/entity-selector/entity-selector.component';
-
+import {DialogModule} from 'primeng/dialog';
+import { DialogComponent } from './components/ui/dialogs/dialog/dialog.component';
 @NgModule({
-  declarations: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent, TextBoxComponent, UiComponentFactoryComponent, ComponentRendererComponent, EntityDetailTemplateComponent, EntitySelectorComponent],
+  declarations: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent, TextBoxComponent,
+    UiComponentFactoryComponent, ComponentRendererComponent, EntityDetailTemplateComponent, EntitySelectorComponent, DialogComponent],
   imports: [
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     TableModule,
-    FormsModule
+    FormsModule,
+    DialogModule
   ],
-  exports: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent, TextBoxComponent, EntityDetailTemplateComponent],
+  exports: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent,
+    TextBoxComponent, EntityDetailTemplateComponent],
   entryComponents: [EntityDetailComponent, EntityListComponent]
 })
 export class CoreModule { }

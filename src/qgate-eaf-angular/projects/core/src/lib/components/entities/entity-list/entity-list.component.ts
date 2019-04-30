@@ -5,6 +5,7 @@ import { GetEntityListParams } from '../../../dtos/QGate/Eaf/Domain/Entities/Mod
 import { EntityDetailComponent } from '../entity-detail/entity-detail.component';
 import { AttributeValue } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/AttributeValue.model';
 import { EntityUiService } from '../../../services/entities/entity-ui.service';
+import { Dialog } from 'primeng/dialog';
 
 @Component({
   selector: 'eaf-entity-list',
@@ -16,12 +17,14 @@ export class EntityListComponent implements OnInit {
   @Input() entityName: string;
   @Input() isEmbedded = false;
   @Input() ownerEntity: any;
+  @Input() entityCaption: string;
   @ViewChild('entityDetailContainer', { read: ViewContainerRef }) entityDetailContainer: ViewContainerRef;
   @Output() selectionDone = new EventEmitter<any>();
   @Input() model: EntityList;
   entityDetail: EntityDetailComponent;
   entityDetailRef: ComponentRef<EntityDetailComponent>;
   isSelectionMode = false;
+  isDialogVisible = false;
 
   //TODO Add to constants - 1
   private selectedEntityIndex = -1;
@@ -41,6 +44,10 @@ export class EntityListComponent implements OnInit {
     params.EntityName = this.entityName;
 
     this.model = await this.entityService.GetEntityList(params);
+  }
+
+  openAsDialog() {
+    this.isDialogVisible = true;
   }
 
   async onEditClick(entity: any) {
@@ -77,12 +84,18 @@ export class EntityListComponent implements OnInit {
     );
     this.entityDetailRef = this.entityDetailContainer.createComponent(factory);
 
-    const entityDetail = this.entityDetailRef.instance;
-    entityDetail.entityName = this.entityName;
-    entityDetail.keys = keys;
-    entityDetail.entityLoaded.subscribe(x => this.onEntityDetailLoaded(x));
-    entityDetail.okClick.subscribe(x => this.onEntityDetailOkClick(x));
+    this.entityDetail = this.entityDetailRef.instance;
+    this.entityDetail.entityName = this.entityName;
+    this.entityDetail.keys = keys;
+    this.entityDetail.entityLoaded.subscribe(x => this.onEntityDetailLoaded(x));
+    this.entityDetail.okClick.subscribe(x => this.onEntityDetailOkClick(x));
+    this.openEntityDetail();
   }
+
+  openEntityDetail() {
+    this.entityDetail.open();
+  }
+
 
   onEntityDetailLoaded(entity: any) {
     // Owner key must by assigned to related entity
@@ -112,6 +125,7 @@ export class EntityListComponent implements OnInit {
 
   closeEntityDetail() {
     if (this.entityDetailRef) {
+      this.entityDetail.close();
       this.entityDetailRef.destroy();
     }
   }

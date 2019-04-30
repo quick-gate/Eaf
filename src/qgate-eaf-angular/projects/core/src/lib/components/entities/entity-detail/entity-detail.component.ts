@@ -24,6 +24,7 @@ export class EntityDetailComponent implements OnInit {
 
   model: EntityDetail;
   isNew = false;
+  isVisible = false;
 
   constructor(private entityService: EntityService) { }
 
@@ -48,6 +49,18 @@ export class EntityDetailComponent implements OnInit {
     this.okClick.emit(result.EntityLisItem);
   }
 
+  open() {
+    this.openClose(true);
+  }
+
+  close() {
+    this.openClose(false);
+  }
+
+  private openClose(open: boolean) {
+    this.isVisible = open;
+  }
+
   async saveEntity(): Promise<SaveEntityResult> {
     const params = new SaveEntityParams();
     params.Entity = this.model.Entity;
@@ -60,8 +73,8 @@ export class EntityDetailComponent implements OnInit {
 
     for (const component of this.model.Components) {
       if (component.Type === ComponentType.EntitySelector) {
-        let entitySelector = <EntitySelector>component;
-        if(entitySelector.IsComposition){
+        const entitySelector = <EntitySelector>component;
+        if (entitySelector.IsComposition) {
           continue;
         }
 

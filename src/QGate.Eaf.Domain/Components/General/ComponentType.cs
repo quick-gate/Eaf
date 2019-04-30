@@ -4,6 +4,7 @@
     {
         TextBox,
         EntitySelector,
-        EntityList
+        EntityList,
+        EntityDetail
     }
 }

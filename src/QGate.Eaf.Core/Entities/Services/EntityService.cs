@@ -65,41 +65,15 @@ namespace QGate.Eaf.Core.Entities.Services
 
             }
 
+
             var result = new GetEntityDetailResult
             {
-                EntityDetail = new EntityDetail
-                {
-                    Entity = entity,
-                    Components = new List<ComponentBase>()
-                    //{
-                    //    new TextBox
-                    //    {
-                    //        Binding = new ComponentBinding
-                    //        {
-                    //            PropertyPath = new List<string> { "Code" }
-                    //        }
-                    //    },
-                    //    new TextBox
-                    //    {
-                    //        Binding = new ComponentBinding
-                    //        {
-                    //            PropertyPath = new List<string> { "Name" }
-                    //        }
-                    //    },
-                    //    new EntitySelector
-                    //    {
-                    //        EntityName = "QGate.Erp.Domain.Models.Products.ProductDescription, QGate.Erp.Domain",
-                    //        DisplayAttributes = new List<string> {"Small"},
-                    //        KeyAttributes = new List<string> {"DescriptionId"},
-                    //        RelationAttributes = new List<string> {"ProductId"},
-                    //        Binding = new ComponentBinding
-                    //        {
-                    //            PropertyPath = new List<string> { "Description" }
-                    //        }
-                    //    }
-                    //}
-                }
+                EntityDetail = CreateEntityComponentBase<EntityDetail>(entityMetadata, null)
             };
+
+            result.EntityDetail.Entity = entity;
+            result.EntityDetail.Components = new List<ComponentBase>();
+
 
             foreach (var attribute in entityMetadata.Attributes)
             {
@@ -127,10 +101,11 @@ namespace QGate.Eaf.Core.Entities.Services
 
                 if (relation.RelationType == RelationType.OneToMany)
                 {
-                    var entityList = FillComponentBase(new EntityList(), relation);
+                    var entityList = CreateEntityComponentBase<EntityList>(relation.Entity, relation);
                     entityList.Attributes = GetEntityListAttributes(relation.Entity);
                     entityList.RelationAttributes = GetRelationAttributes(relation);
                     entityList.EntityName = relation.Entity.Name;
+
                     result.EntityDetail.Components.Add(entityList);
                     continue;
                 }
@@ -156,6 +131,20 @@ namespace QGate.Eaf.Core.Entities.Services
 
 
             return result;
+        }
+
+        private TComponent CreateEntityComponentBase<TComponent>(EntityMetadata entityMetadata, MetadataBase relationOrAttribute) where TComponent : EntityComponentBase
+        {
+            var component = Activator.CreateInstance<TComponent>();
+            component.EntityName = entityMetadata.Name;
+            //TODO Improve get current language
+            component.EntityCaption = entityMetadata.Translations.FirstOrDefault()?.Name;
+            if (relationOrAttribute != null)
+            {
+                FillComponentBase(component, relationOrAttribute);
+            }
+
+            return component;
         }
 
         private IList<RelationAttributeDto> GetRelationAttributes(RelationMetadata relation)
@@ -188,13 +177,12 @@ namespace QGate.Eaf.Core.Entities.Services
             var query = GetEntityListQuery(entityMetadata);
             List<dynamic> entities = query.ToDynamicList();
 
+            var entityList = CreateEntityComponentBase<EntityList>(entityMetadata, null);
+            entityList.Entities = entities;
+            entityList.Attributes = entityListAttributes;
             var result = new GetEntityListResult
             {
-                EntityList = new EntityList
-                {
-                    Entities = entities,
-                    Attributes = entityListAttributes
-                }
+                EntityList = entityList
             };
 
             return result;

@@ -49,6 +49,7 @@ namespace QGate.Eaf.Application.Infrastructure.Configuration
                 typeof(SaveEntityResult),
                 //Components
                 typeof(ComponentBase),
+                typeof(EntityComponentBase),
                 typeof(ComponentBinding),
                 typeof(EditorBase),
                 typeof(TextBox),

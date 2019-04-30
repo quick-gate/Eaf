@@ -2,9 +2,10 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
+import { EntityComponentBase } from './EntityComponentBase.model';
 import { ComponentBase } from '../General/ComponentBase.model';
 
-export class EntityDetail
+export class EntityDetail extends EntityComponentBase
 {
 	public Entity: any;
 	public Components: ComponentBase[];
