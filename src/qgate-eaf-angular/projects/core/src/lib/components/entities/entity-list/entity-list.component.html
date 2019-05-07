@@ -1,28 +1,39 @@
 <ng-template #entityListTemplate>
-  <h1 *ngIf="model">{{entityCaption? entityCaption: model.EntityCaption}}</h1>
-  <a href="#" (click)="onAddClick()">Add</a>
-  <p-table *ngIf="model" [value]="model.Entities" metaKeySelection="true" selectionMode="multiple"
-    [(selection)]="selectedEntities" pSelectableRowDisabled="true">
-    <ng-template pTemplate="header">
-      <tr>
-        <th *ngFor="let attribute of model.Attributes">
-          {{attribute.Caption}}
-        </th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-entity let-rowData let-rowIndex="rowIndex">
-      <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex" (dblclick)="onRowDblClick(rowIndex, rowData)">
-        <td *ngFor="let attribute of model.Attributes">
-          <a href="#" *ngIf="attribute.IsKey" (click)="onEditClick(entity, rowIndex)">{{entity[attribute.Name]}}</a>
-          <span *ngIf="!attribute.IsKey">{{entity[attribute.Name]}}</span>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+  <ng-container *ngIf="model">
+    <eaf-confirm-dialog message="Do you want to delete current record?" (closed)="onConfirmDialogClose($event)" [isVisible]="isConfirmDialogVisible"></eaf-confirm-dialog>
+    <h3 *ngIf="!isDialogVisible">{{model.EntityCaption}}</h3>
+    <eaf-toolbar>
+      <eaf-toolbar-item-group groupAlign="left">
+        <eaf-button icon="pi pi-plus" (click)="onAddClick()"></eaf-button>
+        <eaf-button icon="pi pi-pencil" (click)="editCurrentEntity()"></eaf-button>
+        <eaf-button icon="pi pi-trash" (click)="deleteCurrentEntity()"></eaf-button>
+      </eaf-toolbar-item-group>
+    </eaf-toolbar>
+    <p-table *ngIf="model" [value]="model.Entities" metaKeySelection="true" selectionMode="multiple"
+      [(selection)]="selectedEntities" pSelectableRowDisabled="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th *ngFor="let attribute of model.Attributes">
+            {{attribute.Caption}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-entity let-rowData let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex" (dblclick)="onRowDblClick(rowIndex, rowData)">
+          <td *ngFor="let attribute of model.Attributes">
+            <a href="#" *ngIf="attribute.IsKey" (click)="onEditClick(entity, rowIndex)">{{entity[attribute.Name]}}</a>
+            <span *ngIf="!attribute.IsKey">{{entity[attribute.Name]}}</span>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-container>
 </ng-template>
 
 <ng-template #entityDetailContainer></ng-template>
 <ng-template *ngIf="!isDialogVisible then entityListTemplate"></ng-template>
-<eaf-dialog [title]="model ? model.EntityCaption : ''" [(isVisible)]="isDialogVisible"><ng-template *ngIf="isDialogVisible then entityListTemplate"></ng-template></eaf-dialog>
+<eaf-dialog [title]="model ? model.EntityCaption : ''" [(isVisible)]="isDialogVisible">
+  <ng-template *ngIf="isDialogVisible then entityListTemplate"></ng-template>
+</eaf-dialog>
 
 <!-- <eaf-entity-detail></eaf-entity-detail> -->

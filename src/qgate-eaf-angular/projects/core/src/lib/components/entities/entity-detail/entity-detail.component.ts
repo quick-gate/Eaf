@@ -35,7 +35,7 @@ export class EntityDetailComponent implements OnInit {
     params.IncludePropertyPaths = ['*'];
 
 
-    this.model = await this.entityService.GetEntityDetail(params);
+    this.model = await this.entityService.getEntityDetail(params);
 
     this.customTemplateContext = { $implicit: this.model };
 
@@ -84,7 +84,7 @@ export class EntityDetailComponent implements OnInit {
       }
     }
 
-    return this.entityService.SaveEntity(params);
+    return this.entityService.saveEntity(params);
 
   }
 

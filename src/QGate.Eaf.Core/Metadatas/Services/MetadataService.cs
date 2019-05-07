@@ -176,14 +176,15 @@ namespace QGate.Eaf.Core.Metadatas.Services
 
                     relationMetadata.Name = propertyInfo.Name;
 
-                    relationMetadata.RelationType = propertyInfo.PropertyType.IsCollection() ?
-                        RelationType.OneToMany : RelationType.OneToOne;
-                    
+                   
 
                     var relationInfo = new RelationInfo(relationMetadata);
                     entityMetadata.RelationInfos.Add(relationInfo);
 
                     relationMetadata.Type = entityMetadata.Type.GetProperty(relationMetadata.Name).PropertyType;
+
+                    relationMetadata.RelationType = relationMetadata.Type.IsCollection() ?
+                    RelationType.OneToMany : RelationType.OneToOne;
 
                     if (!relationMetadata.IsReference && relationMetadata.EntityReferenceAttribute != null)
                     {

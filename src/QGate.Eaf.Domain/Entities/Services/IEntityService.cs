@@ -10,5 +10,7 @@ namespace QGate.Eaf.Domain.Entities.Services
 
         SaveEntityResult SaveEntity(SaveEntityParams parameters);
 
+        DeleteEntityResult DeleteEntity(DeleteEntityParams parameters);
+
     }
 }

@@ -15,16 +15,30 @@ import { EntityDetailTemplateComponent } from './components/entities/entity-deta
 import { EntitySelectorComponent } from './components/ui/entities/entity-selector/entity-selector.component';
 import {DialogModule} from 'primeng/dialog';
 import { DialogComponent } from './components/ui/dialogs/dialog/dialog.component';
+import { ToolbarComponent } from './components/ui/toolbars/toolbar/toolbar.component';
+import {ToolbarModule} from 'primeng/toolbar';
+import {ButtonModule} from 'primeng/button';
+import { ToolbarItemGroupComponent } from './components/ui/toolbars/toolbar/toolbar-item-group/toolbar-item-group.component';
+import { ButtonComponent } from './components/ui/buttons/button/button.component';
+import {InputTextModule} from 'primeng/inputtext';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import { ConfirmDialogComponent } from './components/ui/dialogs/confirm-dialog/confirm-dialog.component';
+
 @NgModule({
   declarations: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent, TextBoxComponent,
-    UiComponentFactoryComponent, ComponentRendererComponent, EntityDetailTemplateComponent, EntitySelectorComponent, DialogComponent],
+    UiComponentFactoryComponent, ComponentRendererComponent, EntityDetailTemplateComponent, EntitySelectorComponent,
+    DialogComponent, ToolbarComponent, ToolbarItemGroupComponent, ButtonComponent, ConfirmDialogComponent],
   imports: [
     HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     TableModule,
     FormsModule,
-    DialogModule
+    DialogModule,
+    ToolbarModule,
+    ButtonModule,
+    InputTextModule,
+    ConfirmDialogModule
   ],
   exports: [CoreComponent, EntityListComponent, EntityMetadataListComponent, EntityDetailComponent,
     TextBoxComponent, EntityDetailTemplateComponent],

@@ -7,6 +7,7 @@
     </ng-container>
 
     <ng-template *ngTemplateOutlet="customTemplate; context: customTemplateContext"></ng-template>
-    <button class="btn btn-default" (click)="okClickInternal()">OK</button>
+    <eaf-button icon="pi pi-check" (click)="okClickInternal()"></eaf-button>
+    <eaf-button icon="pi pi-times"></eaf-button>
   </ng-container>
 </eaf-dialog>

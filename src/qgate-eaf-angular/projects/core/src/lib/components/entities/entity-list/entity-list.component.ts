@@ -6,6 +6,7 @@ import { EntityDetailComponent } from '../entity-detail/entity-detail.component'
 import { AttributeValue } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/AttributeValue.model';
 import { EntityUiService } from '../../../services/entities/entity-ui.service';
 import { Dialog } from 'primeng/dialog';
+import { DeleteEntityParams } from '../../../dtos/QGate/Eaf/Domain/Entities/Models/Params/DeleteEntityParams.model';
 
 @Component({
   selector: 'eaf-entity-list',
@@ -17,7 +18,6 @@ export class EntityListComponent implements OnInit {
   @Input() entityName: string;
   @Input() isEmbedded = false;
   @Input() ownerEntity: any;
-  @Input() entityCaption: string;
   @ViewChild('entityDetailContainer', { read: ViewContainerRef }) entityDetailContainer: ViewContainerRef;
   @Output() selectionDone = new EventEmitter<any>();
   @Input() model: EntityList;
@@ -25,6 +25,7 @@ export class EntityListComponent implements OnInit {
   entityDetailRef: ComponentRef<EntityDetailComponent>;
   isSelectionMode = false;
   isDialogVisible = false;
+  isConfirmDialogVisible = false;
 
   //TODO Add to constants - 1
   private selectedEntityIndex = -1;
@@ -43,15 +44,36 @@ export class EntityListComponent implements OnInit {
 
     params.EntityName = this.entityName;
 
-    this.model = await this.entityService.GetEntityList(params);
+    this.model = await this.entityService.getEntityList(params);
   }
 
   openAsDialog() {
     this.isDialogVisible = true;
   }
 
+  async editCurrentEntity() {
+    const currentEntity = this.getCurrentEntity();
+
+    if (!currentEntity) {
+      return;
+    }
+
+
+    return this.onEditClick(currentEntity);
+
+  }
+
+  getCurrentEntity(): any {
+    if (!this.selectedEntities || this.selectedEntities.length === 0) {
+      return null;
+    }
+
+    // TODO Add support for multiple row selection
+    return this.selectedEntities[0];
+  }
+
   async onEditClick(entity: any) {
-    this.selectedEntityIndex = this.model.Entities.indexOf(entity);
+    this.setCurrentEntityndex(entity);
     await this.showEntityDetail(this.getEntityKeys(entity));
   }
 
@@ -111,6 +133,41 @@ export class EntityListComponent implements OnInit {
 
     this.closeEntityDetail();
   }
+
+  async deleteCurrentEntity() {
+    const currentEntity = this.getCurrentEntity();
+    if (!currentEntity) {
+      return;
+    }
+
+    this.isConfirmDialogVisible = true;
+  }
+
+  async onConfirmDialogClose(accept: boolean) {
+
+    if (!accept) {
+      return;
+    }
+
+    const currentEntity = this.getCurrentEntity();
+    if (!currentEntity) {
+      return;
+    }
+
+    this.setCurrentEntityndex(currentEntity);
+    const deleteEntityParams = new DeleteEntityParams();
+    deleteEntityParams.EntityName = this.entityName;
+    deleteEntityParams.Keys = this.getEntityKeys(currentEntity);
+
+    await this.entityService.deleteEntity(deleteEntityParams);
+    this.setCurrentEntityndex(currentEntity);
+    this.model.Entities.splice(this.selectedEntityIndex, 1);
+  }
+
+  setCurrentEntityndex(entity: any) {
+    this.selectedEntityIndex = this.model.Entities.indexOf(entity);
+  }
+
 
 
   onRowDblClick(selectedEtityIndex: number, selectedEntity: any) {

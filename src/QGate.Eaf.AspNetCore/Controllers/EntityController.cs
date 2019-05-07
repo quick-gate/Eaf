@@ -34,5 +34,12 @@ namespace QGate.Eaf.AspNetCore.Controllers
         {
             return _entityService.SaveEntity(parameters);
         }
+
+        [Route("delete")]
+        [HttpPost]
+        public DeleteEntityResult DeleteEntity([FromBody] DeleteEntityParams parameters)
+        {
+            return _entityService.DeleteEntity(parameters);
+        }
     }
 }

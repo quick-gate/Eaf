@@ -23,6 +23,7 @@ namespace QGate.Eaf.Core.Entities.Services
 {
     public class EntityService : IEntityService
     {
+        private const string IncludeAllChar = "*";
         private readonly EafDataContext _dataContext;
         private readonly IMetadataService _metadataService;
         public EntityService(EafDataContext dataContext, IMetadataService metadataService)
@@ -37,34 +38,7 @@ namespace QGate.Eaf.Core.Entities.Services
 
             var entityMetadata = GetEntityMetadata(parameters);
 
-            var includes = parameters.IncludePropertyPaths;
-
-            if (includes != null && includes.Count == 1 && includes[0] == "*")
-            {
-                includes = new List<string>();
-                foreach (var relation in entityMetadata.Relations)
-                {
-                    includes.Add(relation.Name);
-                }
-            }
-
-            dynamic entity;
-
-            if (parameters.Keys.IsNullOrEmpty())
-            {
-                entity = Activator.CreateInstance(entityMetadata.Type);
-            }
-            else
-            {
-                var query = _dataContext.Set(
-                    entityMetadata.Type,
-                    parameters.IncludePropertyPaths.IsNullOrEmpty() ? null : includes.ToArray());
-
-                query = AddKeyConditions(query, parameters.Keys);
-                entity = query.FirstOrDefault();
-
-            }
-
+            var entity = GetEntity(entityMetadata, parameters.Keys, parameters.IncludePropertyPaths);
 
             var result = new GetEntityDetailResult
             {
@@ -131,6 +105,33 @@ namespace QGate.Eaf.Core.Entities.Services
 
 
             return result;
+        }
+
+        private dynamic GetEntity(EntityMetadata entityMetadata, IList<AttributeValue> keys, IList<string> includes)
+        {
+            if (includes != null && includes.Count == 1 && includes[0] == IncludeAllChar)
+            {
+                includes = new List<string>();
+                foreach (var relation in entityMetadata.Relations)
+                {
+                    includes.Add(relation.Name);
+                }
+            }
+
+            if (keys.IsNullOrEmpty())
+            {
+                return Activator.CreateInstance(entityMetadata.Type);
+            }
+            else
+            {
+                var query = _dataContext.Set(
+                    entityMetadata.Type,
+                    includes.IsNullOrEmpty() ? null : includes.ToArray());
+
+                query = AddKeyConditions(query, keys);
+                return query.FirstOrDefault();
+
+            }
         }
 
         private TComponent CreateEntityComponentBase<TComponent>(EntityMetadata entityMetadata, MetadataBase relationOrAttribute) where TComponent : EntityComponentBase
@@ -315,6 +316,19 @@ namespace QGate.Eaf.Core.Entities.Services
                     attribute.Name : attribute.Translations[0].Name,
                 IsKey = attribute.IsKey
             };
+        }
+
+        public DeleteEntityResult DeleteEntity(DeleteEntityParams parameters)
+        {
+            var entityMetadata = GetEntityMetadata(parameters);
+
+            var entity = GetEntity(entityMetadata, parameters.Keys, new List<string> { IncludeAllChar });
+
+            _dataContext.Remove(entity);
+            _dataContext.SaveChanges();
+
+            return new DeleteEntityResult();
+
         }
     }
 }

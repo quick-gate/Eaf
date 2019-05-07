@@ -47,6 +47,8 @@ namespace QGate.Eaf.Application.Infrastructure.Configuration
                 typeof(AttributeValue),
                 typeof(SaveEntityParams),
                 typeof(SaveEntityResult),
+                typeof(DeleteEntityParams),
+                typeof(DeleteEntityResult),
                 //Components
                 typeof(ComponentBase),
                 typeof(EntityComponentBase),
