@@ -21,7 +21,7 @@
       <ng-template pTemplate="body" let-entity let-rowData let-rowIndex="rowIndex">
         <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="rowIndex" (dblclick)="onRowDblClick(rowIndex, rowData)">
           <td *ngFor="let attribute of model.Attributes">
-            <a href="#" *ngIf="attribute.IsKey" (click)="onEditClick(entity, rowIndex)">{{entity[attribute.Name]}}</a>
+            <a href="#" *ngIf="attribute.IsKey" (click)="onEditClick(entity)">{{entity[attribute.Name]}}</a>
             <span *ngIf="!attribute.IsKey">{{entity[attribute.Name]}}</span>
           </td>
         </tr>

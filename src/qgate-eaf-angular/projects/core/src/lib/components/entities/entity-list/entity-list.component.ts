@@ -29,7 +29,7 @@ export class EntityListComponent implements OnInit {
 
   //TODO Add to constants - 1
   private selectedEntityIndex = -1;
-  private selectedEntities: any[];
+  selectedEntities: any[];
 
 
 
