@@ -18,12 +18,13 @@ namespace QGate.Eaf.AspNetCore.Controllers
         [HttpPost]
         public GetEntityListResult GetEntityList([FromBody]GetEntityListParams parameters)
         {
-            return _entityService.GetEntityList(parameters);
+            var result = _entityService.GetEntityList(parameters);
+            return result;
         }
 
         [Route("get-detail")]
         [HttpPost]
-        public GetEntityDetailResult GetEntityList([FromBody]GetEntityDetailParams parameters)
+        public GetEntityDetailResult GetEntityDetail([FromBody]GetEntityDetailParams parameters)
         {
             return _entityService.GetEntityDetail(parameters);
         }
