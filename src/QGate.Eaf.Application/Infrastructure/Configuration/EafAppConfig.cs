@@ -13,9 +13,9 @@ namespace QGate.Eaf.Application.Infrastructure.Configuration
             _ependencyConfig = ependencyConfig;
         }
 
-        public EafAppConfig AddDataContext<TDataContext>(string connectionString) where TDataContext : EafDataContext
+        public EafAppConfig AddDataContext<TDataContext>(string connectionString, Assembly migrationAssembly = null) where TDataContext : EafDataContext
         {
-            _ependencyConfig.AddDataContext<TDataContext>(connectionString);
+            _ependencyConfig.AddDataContext<TDataContext>(connectionString, migrationAssembly);
             return this;
         }
 

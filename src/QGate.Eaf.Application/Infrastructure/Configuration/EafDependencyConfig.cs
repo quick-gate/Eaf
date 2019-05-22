@@ -7,6 +7,7 @@ using QGate.Eaf.Data.Ef;
 using QGate.Eaf.Domain.Entities.Services;
 using QGate.Eaf.Domain.Metadatas.Services;
 using System;
+using System.Reflection;
 
 namespace QGate.Eaf.Application.Infrastructure.Configuration
 {
@@ -30,12 +31,18 @@ namespace QGate.Eaf.Application.Infrastructure.Configuration
             return this;
         }
 
-        public EafDependencyConfig AddDataContext<TDataContext>(string connectionString) where TDataContext: EafDataContext
+        public EafDependencyConfig AddDataContext<TDataContext>(string connectionString, Assembly migrationAssembly = null) where TDataContext: EafDataContext
         {
             Services
                 .AddSingleton<DbContextOptions>(
                 new DbContextOptionsBuilder<TDataContext>()
-                    .UseSqlServer(connectionString)
+                    .UseSqlServer(connectionString, x=> 
+                    {
+                        if(migrationAssembly != null)
+                        {
+                            x.MigrationsAssembly(migrationAssembly.FullName);
+                        }
+                    })
                     .Options
                 );
 
