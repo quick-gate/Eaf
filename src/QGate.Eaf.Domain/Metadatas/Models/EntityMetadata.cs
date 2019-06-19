@@ -4,6 +4,7 @@ namespace QGate.Eaf.Domain.Metadatas.Models
 {
     public class EntityMetadata : MetadataBase
     {
+        private IDictionary<string, MetadataBase> _memberDictionary = new Dictionary<string, MetadataBase>();
         public IList<AttributeMetadata> Attributes { get; } = new List<AttributeMetadata>();
         public IList<RelationMetadata> Relations { get; } = new List<RelationMetadata>();
         public IList<RelationInfo> RelationInfos { get; } = new List<RelationInfo>();
@@ -22,6 +23,7 @@ namespace QGate.Eaf.Domain.Metadatas.Models
             }
 
             _attributeDictionary.Add(attributeMetadata.Name, attributeMetadata);
+            AddMemberInternal(attributeMetadata);
             Attributes.Add(attributeMetadata);
         }
 
@@ -39,7 +41,13 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         {
             FillAttributeAndRelationBase(relationMetadata);
             _relationDictionary.Add(relationMetadata.Name, relationMetadata);
+            AddMemberInternal(relationMetadata);
             Relations.Add(relationMetadata);
+        }
+
+        private void AddMemberInternal(AttributeMetadataBase member)
+        {
+            _memberDictionary.Add(member.Name, member);
         }
 
         public bool TryGetAttribute(string name, out AttributeMetadata attribute)
@@ -50,6 +58,11 @@ namespace QGate.Eaf.Domain.Metadatas.Models
         public bool TryGetRelation(string name, out RelationMetadata relation)
         {
             return _relationDictionary.TryGetValue(name, out relation);
+        }
+
+        public bool TryGetMember(string name, out MetadataBase member)
+        {
+            return _memberDictionary.TryGetValue(name, out member);
         }
     }
 }

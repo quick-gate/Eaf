@@ -53,7 +53,7 @@
 			Note that in case of using RtDivideTypesAmongFiles, RtTargetFile parameter will 
 			NOT be used anymore.
 		-->
-    <RtTargetDirectory>$(ProjectDir)..\qgate-eaf-angular\projects\core\src\lib\dtos</RtTargetDirectory>
+    <RtTargetDirectory>$(ProjectDir)..\qgate-eaf-angular\projects\eaf-core\src\lib\dtos</RtTargetDirectory>
 
 
     <!--
